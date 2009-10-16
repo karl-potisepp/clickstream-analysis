@@ -39,6 +39,20 @@ def prune(transactions, k_itemset, min_support):
   return k_itemset
 
 
+def print_rules(transactions, min_support):
+  itemsets = freq_item_count(transactions, min_support)
+  itemset_size=0
+
+  while len(itemsets)!=0:
+    print "Itemsets of length %d: " % (itemset_size+1)
+    for item in itemsets:
+      print item
+  
+    itemset_size+=1
+    
+    candiate_set = candidate_gen(itemsets, itemset_size)
+    itemsets = prune(transactions, candiate_set, min_support)   
+
 def demo():
 
   transactions = [[1,2,3,4,5,6,7,8],
@@ -51,18 +65,7 @@ def demo():
         ]
 
   min_support = 5
-  itemsets = freq_item_count(transactions, min_support)
-  itemset_size=0
-
-  while len(itemsets)!=0:
-    print "Itemsets of length %d: " % (itemset_size+1)
-    for item in itemsets:
-      print item
-  
-    itemset_size+=1
-    
-    candiate_set = candidate_gen(itemsets, itemset_size)
-    itemsets = prune(transactions, candiate_set, min_support)            
+  print_rules(transactions, min_support)           
 
 if __name__ == "__main__":
   demo()

@@ -21,6 +21,9 @@ def filter(line, ip_blacklist):
 	result = result or line.url.find(".css") != -1
 	result = result or line.url.find(".ico") != -1
 
+	#no error pages
+	result = result or line.url.find("/errorleht") != -1
+
 	#no HTTP OPTIONS
 	result = result or line.http_method.find("OPTIONS") != -1
 
@@ -61,9 +64,8 @@ if __name__ == "__main__":
 			line.url = line.url[0:qmark_index]
 
 		#strip slash from end of url
-		slash_index = line.url.find("/")
-		if slash_index != -1: 
-			line.url = line.url[0:slash_index]
+		if line.url[len(line.url)-1] == "/": 
+			line.url = line.url[0:len(line.url)-1]
 
 		urls.add(line.url)
 		line.time = line.time.split()[0]

@@ -2,9 +2,9 @@
 # -*- coding: utf_8 -*-
 
 import apachelogs
-from datetime import datetime, date, time
+from datetime import datetime
 import uuid
-import numpy as np
+import apriori
 
 #function to evaluate whether a log file line is useful or not
 def filter(line, ip_blacklist):
@@ -35,8 +35,10 @@ def filter(line, ip_blacklist):
 if __name__ == "__main__":
 
 
-	filename = ["data/math-access_log","data/math-access_log.1","data/math-access_log.2","data/math-access_log.3","data/math-access_log.4"]
-	log = apachelogs.ApacheLogFile(*filename)
+	filename = ["math-access_log","math-access_log.1","math-access_log.2","math-access_log.3","math-access_log.4"]
+	
+	paths = ["../data/"+f for f in filename]
+	log = apachelogs.ApacheLogFile(*paths)
 
 	sessions = {}
 
@@ -87,12 +89,21 @@ if __name__ == "__main__":
 
 		count +=1
 
+	min_support = 2000
 
-    #sessions dict contains all sessions
+	simple_sessions = []
+	for s in sessions.values():
+		session = []
+		for line in s:
+			session.append(line.url)
+		simple_sessions.append(session)
+	
+	
+	
+	apriori.print_rules(simple_sessions, min_support)
+	
 
-	#TODO: output a list of sessions
-    
-
-	print "Matching lines: ", count
-	print "No events", len(urls)
+	#print "session", len(sessions)
+	#print "Matching lines: ", count
+	#print "No events", len(urls)
 

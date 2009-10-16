@@ -55,7 +55,15 @@ if __name__ == "__main__":
 		if filter(line, ip_blacklist):
 			continue
 
-		#TODO: strip parts containing ?var=id&var2=id2 from the end of URLs 
+		#strip parts starting with ? from urls
+		qmark_index = line.url.find("")
+		if qmark_index != -1:
+			line.url = line.url[0:qmark_index]
+
+		#strip slash from end of url
+		slash_index = line.url.find("/")
+		if slash_index != -1: 
+			line.url = line.url[0:slash_index]
 
 		urls.add(line.url)
 		line.time = line.time.split()[0]

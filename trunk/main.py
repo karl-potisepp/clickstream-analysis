@@ -61,14 +61,15 @@ if __name__ == "__main__":
 			continue
 
 		#strip parts starting with ? from urls
-		qmark_index = line.url.find("")
+		qmark_index = line.url.find("?")
 		if qmark_index != -1:
 			line.url = line.url[0:qmark_index]
-
+		
 		#strip slash from end of url
-		if line.url[len(line.url)-1] == "/": 
+		if len(line.url) > 0 and line.url[len(line.url)-1] == "/": 
 			line.url = line.url[0:len(line.url)-1]
 
+		
 		urls.add(line.url)
 		line.time = line.time.split()[0]
 		line.date = datetime.strptime(line.time, '%d/%b/%Y:%H:%M:%S')
@@ -103,7 +104,7 @@ if __name__ == "__main__":
 	apriori.print_rules(simple_sessions, min_support)
 	
 
-	#print "session", len(sessions)
-	#print "Matching lines: ", count
-	#print "No events", len(urls)
+	print "session", len(sessions)
+	print "Matching lines: ", count
+	print "No events", len(urls)
 

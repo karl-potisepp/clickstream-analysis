@@ -34,10 +34,17 @@ def filter(line, ip_blacklist):
 
 if __name__ == "__main__":
 
-
-	filename = ["math-access_log","math-access_log.1","math-access_log.2","math-access_log.3","math-access_log.4"]
+	#log file names
+	filename = [
+		"math-access_log",
+		"math-access_log.1",
+		"math-access_log.2",
+		"math-access_log.3",
+		"math-access_log.4"]
 	
 	paths = ["../data/"+f for f in filename]
+
+	#read log files
 	log = apachelogs.ApacheLogFile(*paths)
 
 	sessions = {}
@@ -47,7 +54,11 @@ if __name__ == "__main__":
 	#list of IPs deemed non-useful (automated pollers, search robots)
 	ip_blacklist = []
 	
+	# set for urls
 	urls = set([])
+
+	#set for storing how many seconds was the interval between request for an url and last request in the session
+	urls_times = set([])
 	count = 0
 
 	for line in log:
@@ -57,6 +68,7 @@ if __name__ == "__main__":
 		if line.url.find("robots.txt") != -1:
 			ip_blacklist.append(line.ip)
 
+		#whether the line should be discarded or not
 		if filter(line, ip_blacklist):
 			continue
 
@@ -69,7 +81,9 @@ if __name__ == "__main__":
 		if len(line.url) > 0 and line.url[len(line.url)-1] == "/": 
 			line.url = line.url[0:len(line.url)-1]
 
-		
+		#TODO: to calculate the time spent viewing the url in hand, we must know 
+		#the time of the next click within this session
+		#so we must have a variable for each session storing the it's last request
 		urls.add(line.url)
 		line.time = line.time.split()[0]
 		line.date = datetime.strptime(line.time, '%d/%b/%Y:%H:%M:%S')
@@ -79,7 +93,8 @@ if __name__ == "__main__":
 		(last_time_for_ip, last_session_for_ip) = last_ip[line.ip]
 		
 		delta =  line.date - last_time_for_ip
-		#1800 session time out session
+
+		#1800 seconds session time out
 		if delta.seconds  > 1800:
 			sess_key =  uuid.uuid4().hex
 		else:
@@ -90,7 +105,7 @@ if __name__ == "__main__":
 
 		count +=1
 
-	min_support = 2000
+	min_support = 1000
 
 	simple_sessions = []
 	for s in sessions.values():

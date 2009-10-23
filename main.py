@@ -47,8 +47,14 @@ if __name__ == "__main__":
 	#read log files
 	log = apachelogs.ApacheLogFile(*paths)
 
+	#dictionary for storing sessions
+	#key - session id
+	#value - 
 	sessions = {}
 
+	#dictionary containing tuples (time, unique id) for IPs
+	#key - IP
+	#value - (time of last request, unique id)
 	last_ip = {}
 
 	#list of IPs deemed non-useful (automated pollers, search robots)
@@ -57,11 +63,21 @@ if __name__ == "__main__":
 	# set for urls
 	urls = set([])
 
-	#set for storing how many seconds was the interval between request for an url and last request in the session
-	urls_times = set([])
+	#dictionary for storing the interval in seconds between request for an url and last request in that session
+	#key - url
+	#value - list of intervals
+	urls_times = {}
+	#dictionary for storing the last url for every session
+	#key - session id
+	#value - last url for that session
+	last_session_url = {}
+
+
 	count = 0
 
 	for line in log:
+		
+		#checks whether line is useful or not
 
 		#whether or not the requested file is robots.txt
 		#if it is, we add the ip to the blacklist
@@ -72,6 +88,11 @@ if __name__ == "__main__":
 		if filter(line, ip_blacklist):
 			continue
 
+		#END checks whether line is useful or not
+
+
+		#format URLs so that equivalent URLs would always be same		
+
 		#strip parts starting with ? from urls
 		qmark_index = line.url.find("?")
 		if qmark_index != -1:
@@ -81,13 +102,19 @@ if __name__ == "__main__":
 		if len(line.url) > 0 and line.url[len(line.url)-1] == "/": 
 			line.url = line.url[0:len(line.url)-1]
 
+		#END format URLs
+
 		#TODO: to calculate the time spent viewing the url in hand, we must know 
 		#the time of the next click within this session
 		#so we must have a variable for each session storing the it's last request
+
+		#add URL to list of URLs
 		urls.add(line.url)
 		line.time = line.time.split()[0]
 		line.date = datetime.strptime(line.time, '%d/%b/%Y:%H:%M:%S')
 
+		#here we add a tuple of (date of request, unique id)
+		#to correspond to an IP address in the last_ip dictionary
 		last_ip.setdefault(line.ip, (line.date, uuid.uuid4().hex))
 		
 		(last_time_for_ip, last_session_for_ip) = last_ip[line.ip]
@@ -101,6 +128,9 @@ if __name__ == "__main__":
 			sess_key =  last_session_for_ip
 	
 		last_ip[line.ip] = (line.date, sess_key)
+
+		#add line to sessions dictionary
+		#if session doesn't exist in sessions, then initialize it
 		sessions.setdefault(sess_key, []).append(line)
 
 		count +=1

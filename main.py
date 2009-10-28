@@ -5,6 +5,8 @@ import apachelogs
 from datetime import datetime
 import uuid
 import apriori
+#regular expressions
+#import re
 
 #function to evaluate whether a log file line is useful or not
 def filter(line, ip_blacklist):
@@ -16,7 +18,9 @@ def filter(line, ip_blacklist):
 	result = result or line.url.find(".png") != -1
 	result = result or line.url.find(".gif") != -1
 	result = result or line.url.find(".jpg") != -1
+	result = result or line.url.find(".pjpeg") != -1
 	result = result or line.url.find(".png") != -1
+	result = result or line.url.find(".x-png") != -1
 	result = result or line.url.find(".js") != -1
 	result = result or line.url.find(".css") != -1
 	result = result or line.url.find(".ico") != -1
@@ -28,9 +32,19 @@ def filter(line, ip_blacklist):
 	result = result or line.http_method.find("OPTIONS") != -1
 
 	#no home directories
-	result = result or line.http_method.find("/~") != -1
+	result = result or line.url.find("/~") != -1
 
 	return result
+
+#crude function for five number summary
+def five_num_summary(nr_list):
+	nr_list.sort()
+	l = len(nr_list)
+	return (nr_list[0], 
+		nr_list[ (l-int(3*(l/4)))-1 ], 
+		nr_list[ (l-int(2*(l/4)))-1 ], 
+		nr_list[ (l-int(l/4))-1 ],
+		nr_list[ l-1 ])
 
 if __name__ == "__main__":
 
@@ -104,10 +118,6 @@ if __name__ == "__main__":
 
 		#END format URLs
 
-		#TODO: to calculate the time spent viewing the url in hand, we must know 
-		#the time of the next click within this session
-		#so we must have a variable for each session storing the it's last request
-
 		#add URL to list of URLs
 		urls.add(line.url)
 		line.time = line.time.split()[0]
@@ -126,6 +136,21 @@ if __name__ == "__main__":
 			sess_key =  uuid.uuid4().hex
 		else:
 			sess_key =  last_session_for_ip
+
+		#to calculate the time spent viewing the url in hand, we must know 
+		#the time of the next click within this session
+		#so we must have a variable for each session storing the url of it's last request
+
+		#if the last url for the current session is known
+		#then delta.seconds is the amount of seconds spent viewing that url
+		if sess_key in last_session_url:			
+			if line.url in urls_times:
+				urls_times[line.url].append(delta.seconds)
+			else:
+				urls_times[line.url] = [delta.seconds]			
+			
+
+		last_session_url.setdefault(sess_key, line.url)
 	
 		last_ip[line.ip] = (line.date, sess_key)
 
@@ -135,7 +160,7 @@ if __name__ == "__main__":
 
 		count +=1
 
-	min_support = 1000
+	min_support = 1500
 
 	simple_sessions = []
 	for s in sessions.values():
@@ -151,5 +176,10 @@ if __name__ == "__main__":
 
 	print "session", len(sessions)
 	print "Matching lines: ", count
-	print "No events", len(urls)
+	print "Number of different urls", len(urls)
+
+	#calculate five number summaries for all urls to find out how 
+	#long people stayed on one page
+	#for url, secs in urls_times.iteritems():
+	#	print url, five_num_summary(secs), secs
 

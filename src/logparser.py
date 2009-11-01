@@ -1,6 +1,7 @@
 # -*- coding: utf_8 -*-
 
 import uuid
+import config
 from datetime import datetime
 
 class LogParser:
@@ -62,6 +63,7 @@ class LogParser:
     
             #format URLs so that equivalent URLs would always be same        
     
+            
             #strip parts starting with ? from urls
             qmark_index = line.url.find("?")
             if qmark_index != -1:
@@ -70,7 +72,9 @@ class LogParser:
             #strip slash from end of url
             if len(line.url) > 0 and line.url[len(line.url)-1] == "/": 
                 line.url = line.url[0:len(line.url)-1]
-    
+            
+            if len(line.url) == 0:
+                line.url = "___"
             #END format URLs
     
             #add URL to list of URLs
@@ -86,8 +90,8 @@ class LogParser:
             
             delta =  line.date - last_time_for_ip
     
-            #1800 seconds session time out
-            if delta.seconds  > 1800:
+
+            if delta.seconds  > config.session_timeout:
                 sess_key =  uuid.uuid4().hex
             else:
                 sess_key =  last_session_for_ip

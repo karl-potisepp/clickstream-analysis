@@ -1,0 +1,9 @@
+To use clustering, following python libraries must be installed
+
+scipy-cluster - http://code.google.com/p/scipy-cluster/
+numpy - http://sourceforge.net/projects/numpy/
+matplotlib - http://matplotlib.sourceforge.net/
+
+
+Development related info:
+http://www.python.org/dev/peps/pep-0008/ 4 spaces per indention level, spaces only

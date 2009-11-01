@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf_8 -*-
+from clustering import hcluster
 
 import apachelogs
 from datetime import datetime
@@ -55,6 +56,8 @@ if __name__ == "__main__":
 		"math-access_log.2",
 		"math-access_log.3",
 		"math-access_log.4"]
+        
+	filename = filename[:3]
 	
 	paths = ["../data/"+f for f in filename]
 
@@ -160,7 +163,7 @@ if __name__ == "__main__":
 
 		count +=1
 
-	min_support = 1500
+	min_support = 500
 
 	simple_sessions = []
 	for s in sessions.values():
@@ -171,7 +174,7 @@ if __name__ == "__main__":
 	
 	
 	
-	apriori.print_rules(simple_sessions, min_support)
+	rules = apriori.print_rules(simple_sessions, min_support)
 	
 
 	print "session", len(sessions)

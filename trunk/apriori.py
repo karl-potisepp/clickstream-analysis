@@ -9,7 +9,7 @@ def freq_item_count(transactions, min_support):
       if item in freq_item_list:
         freq_item_list[item]+=1
       else:
-        #freq_item_list.update({item:1})
+
         freq_item_list[item]=1
 
   return [x for x in freq_item_list if freq_item_list[x]>=min_support]
@@ -42,30 +42,21 @@ def prune(transactions, k_itemset, min_support):
 def print_rules(transactions, min_support):
   itemsets = freq_item_count(transactions, min_support)
   itemset_size=0
+  rules = []
 
   while len(itemsets)!=0:
     print "Itemsets of length %d: " % (itemset_size+1)
     for item in itemsets:
       print item
+      
+      if type(item) is not list:
+        rules.append([item])
+      rules.append(item)
   
     itemset_size+=1
     
     candiate_set = candidate_gen(itemsets, itemset_size)
-    itemsets = prune(transactions, candiate_set, min_support)   
+    itemsets = prune(transactions, candiate_set, min_support)  
+  
+  return rules 
 
-def demo():
-
-  transactions = [[1,2,3,4,5,6,7,8],
-        [1,2,3,4,5,8,9,10],
-        [1,2,3,4,7,8,9,10,11],
-        [2,3,4,5,6,7,8,9,29],
-        [3,5,6,7,8,12,22],
-        [5,6,7,9,12,32],
-        [11,23,123,324]
-        ]
-
-  min_support = 5
-  print_rules(transactions, min_support)           
-
-if __name__ == "__main__":
-  demo()

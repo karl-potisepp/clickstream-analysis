@@ -34,27 +34,36 @@ if __name__ == "__main__":
     
     #with math.ut.ee data set, big difference if support is 5%, 6%, 7%
     
-    min_support = int(parser.get_session_count() * 0.06)
-
-    transactions = parser.get_simple_sessions()
+    min_support = int(parser.get_session_count() * 0.05)
+    print min_support
+    range_min = 1
+    range_max = 100
+    transactions = [session for session in parser.get_simple_sessions() if len(session) > range_min and len(session) < range_max ]
 
 
     
+    print "="*80
     rules = apriori.extract_itemsets(transactions, min_support)
     
     items = apriori.calculate_supports(rules, transactions)
     
     for n, itemset in items:
         print n, itemset
-        
     
-    import numpy
+    print "="*80
+	
+	
+    from fpgrowth import find_frequent_itemsets
+    items = find_frequent_itemsets(transactions, min_support)
+    for itemset in items:
+        print itemset
+    
+    
     import pylab
     lens = sorted([len(session) for session in transactions])
-    lens = numpy.array(lens)
-    pylab.hist(lens, bins=25, range=(0,100))
+    pylab.hist(lens,bins=(range_max-range_min), range=(range_min,range_max))
     pylab.show()
-
+    
 
 
 

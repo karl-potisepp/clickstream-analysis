@@ -1,7 +1,10 @@
 # Apriori algorithm for Frequent Itemset Mining
 # found from public domain
+# guess not very fast
 
 # count the frequent 1 itemsets
+import operator
+
 def freq_item_count(transactions, min_support):
     freq_item_list = {}
 
@@ -40,24 +43,57 @@ def prune(transactions, k_itemset, min_support):
     return k_itemset
 
 
-def print_rules(transactions, min_support):
+def extract_itemsets(transactions, min_support):
     itemsets = freq_item_count(transactions, min_support)
     itemset_size=0
     rules = []
 
     while len(itemsets)!=0:
-        print "Itemsets of length %d: " % (itemset_size+1)
         for item in itemsets:
-            print item
-            
             if type(item) is not list:
                 rules.append([item])
-            rules.append(item)
+            else:
+                rules.append(item)
     
         itemset_size+=1
         
         candiate_set = candidate_gen(itemsets, itemset_size)
         itemsets = prune(transactions, candiate_set, min_support)    
     
-    return rules 
+    return rules
+
+def calculate_supports(rules, transactions):
+    annotated = []
+    for itemset1 in rules:
+        ##count =  len([trans for trans in transactions if set(itemset)<=set(trans)])
+        count = 0
+        for trans in transactions:
+            if set(itemset1)<=set(trans):
+                count +=1
+        annotated.append((count, itemset1))
+        
+    annotated = sorted(annotated, key=operator.itemgetter(0), reverse=True)        
+    return annotated
+
+
+def extract_closed_itemsets(items):
+    
+    closed = []
+    while len(items) != 0:
+        item = items.pop()
+        closed.append(item)
+        
+        
+        for remaining in items:
+            if set(remaining) <= set(item):
+                items.remove(remaining)
+        
+    
+    return closed
+
+def print_rules(itemsets):
+    
+    for rule in itemsets:
+        print rule
+
 

@@ -7,27 +7,37 @@ import config
 
 
 def analyse_clickstream(paths, support):
-    #read log files
+
+    # read log files
     log = apachelogs.ApacheLogFile(*paths)
 
+    # parse log files, extract sessions
     parser = logparser.LogParser(log, [])
     parser.parse()
     
+    # output simple statistics about data set
     stats = statistics.LogFileStatistics(parser)
     stats.output_some_statistics()
     
-    
+
+    # if support is given as a float, it is presumed to be relative support
+    # i.e. the minimum percentage of transactions to have a certain itemset
+    # the percentage is then converted into absolute support
     if type(support) is float:
         min_support = int(parser.get_session_count() * support)
     else:
         min_support = support
-        
+    
+    # sessions from the parser    
     transactions = [session for session in parser.get_simple_sessions() ]
 
     
     print "="*80
+    # extract all itemsets with support => min_support
     rules = apriori.extract_itemsets(transactions, min_support)
+    # find supports for itemsets from last step
     items = apriori.calculate_supports(rules, transactions)
+    # print supports
     for n, itemset in items:
         print n, itemset
     print "="*80

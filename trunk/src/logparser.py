@@ -11,8 +11,6 @@ class LogParser:
     #key - session id
     #value - 
     sessions = {}
-    
-
 
     #list of IPs deemed non-useful (automated pollers, search robots)
     ip_blacklist = []

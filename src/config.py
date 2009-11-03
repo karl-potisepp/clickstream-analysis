@@ -1,6 +1,6 @@
 #here we should set some default configuration. support threshold, exclude patterns
 
-session_timeout = 900
+session_timeout = 1800
 
 #if float, then relative is considered
 #if int, then absolute
@@ -15,6 +15,7 @@ filename = [
     
 filename.reverse()
 DATA = "../../data/"
+OUTPUT = "../../output/"
 paths = [DATA+f for f in filename]
 
 range_min = 1

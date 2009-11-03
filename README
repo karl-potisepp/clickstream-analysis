@@ -1,6 +1,6 @@
 To use clustering, following python libraries must be installed
 
-scipy-cluster - http://code.google.com/p/scipy-cluster/
+pycluter - http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/software.htm
 numpy - http://sourceforge.net/projects/numpy/
 matplotlib - http://matplotlib.sourceforge.net/
 

@@ -3,6 +3,7 @@
 import uuid
 import config
 from datetime import datetime
+import re
 
 class LogParser:
     
@@ -72,9 +73,14 @@ class LogParser:
             #strip slash from end of url
             if len(line.url) > 0 and line.url[len(line.url)-1] == "/": 
                 line.url = line.url[0:len(line.url)-1]
+                
+            if len(line.url) > 0 and line.url[0] == "/": 
+                line.url = line.url[1:]
             
+            line.url = line.url.replace("/", "_")
             if len(line.url) == 0:
-                line.url = "___"
+                line.url = "avaleht"
+            line.url = re.sub(r'[^\w]', '', line.url)
             #END format URLs
     
             #add URL to list of URLs

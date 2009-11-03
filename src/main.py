@@ -1,69 +1,95 @@
-#!/usr/bin/env python
 # -*- coding: utf_8 -*-
+import sys, getopt, os
 
 import apachelogs, logparser
 import apriori, statistics
+import config
 
 
-
-if __name__ == "__main__":
-
-    #log file names
-    filename = [
-        "math-access_log",
-        "math-access_log.1",
-        "math-access_log.2",
-        "math-access_log.3",
-        "math-access_log.4"]
-    
-    filename.reverse()
-        
-    print filename 
-    paths = ["../../data/"+f for f in filename]
-
-
+def analyse_clickstream(paths, support):
     #read log files
     log = apachelogs.ApacheLogFile(*paths)
 
     parser = logparser.LogParser(log, [])
     parser.parse()
+    
     stats = statistics.LogFileStatistics(parser)
-    
     stats.output_some_statistics()
-    ##stats.print_five_number_summary()
     
-    #with math.ut.ee data set, big difference if support is 5%, 6%, 7%
     
-    min_support = int(parser.get_session_count() * 0.05)
-    print min_support
-    range_min = 1
-    range_max = 100
-    transactions = [session for session in parser.get_simple_sessions() if len(session) > range_min and len(session) < range_max ]
-
+    if type(support) is float:
+        min_support = int(parser.get_session_count() * support)
+    else:
+        min_support = support
+        
+    transactions = [session for session in parser.get_simple_sessions() ]
 
     
     print "="*80
     rules = apriori.extract_itemsets(transactions, min_support)
-    
     items = apriori.calculate_supports(rules, transactions)
-    
     for n, itemset in items:
         print n, itemset
-    
     print "="*80
-	
-	
+    
+    
     from fpgrowth import find_frequent_itemsets
     items = find_frequent_itemsets(transactions, min_support)
     for itemset in items:
         print itemset
     
-    
+"""
+def output_stats():    
     import pylab
     lens = sorted([len(session) for session in transactions])
     pylab.hist(lens,bins=(range_max-range_min), range=(range_min,range_max))
     pylab.show()
+"""
+
+
+def read_opts(argv):
+    filelist = config.paths
+    logfile = None
+    support = config.support    
+    try:
+        opts, args = getopt.getopt(argv, 's:', ["support"])
+        if len(args) == 1:
+            logfile = args[0]
+        
+        support = config.support
+        for o, a in opts:
+            #support
+            if o in ("-s", "--support"):
+                if a.find(".")!=-1:
+                    support = float(a)
+                    if support > 1.0:
+                        raise getopt.GetoptError("support cannot be bigger than 1.0") 
+                else:
+                    support = int(a)
+            else:
+                raise getopt.GetoptError("incompatible arguments")
+
+
+    except getopt.GetoptError, err:
+        print "Error: " + str(err)
+        sys.exit(2)    
+    
+    if logfile is not None and os.path.isdir(logfile) :
+        filelist = map(lambda x: os.path.join(logfile, x), os.listdir(logfile))
+        filelist = filter(lambda x: os.path.isfile(x), filelist)
+    elif logfile is not None:
+        filelist = [logfile]
+
+    return filelist, support
+
+        
+            
     
 
+if __name__ == "__main__":
+    files, support = read_opts(sys.argv[1:])
+
+    analyse_clickstream(files, support)
 
 
+    

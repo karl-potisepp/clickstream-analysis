@@ -54,7 +54,7 @@ class ApacheLogLine:
                 self.http_response_code, self.http_response_size])
 
 
-_lineRegex = re.compile(r'(\d+) ([^ ]*) ([^ ]*) \[([^\]]*)\] "([^"]*)" (\d+) (\d+)')
+_lineRegex = re.compile(r'([^ ]*) ([^ ]*) ([^ ]*) \[([^\]]*)\] "([^"]*)" (\d+) (\d+)')
 
 class ApacheLogFile:
     """An abstraction for reading and parsing Apache log files."""

@@ -1,5 +1,5 @@
 #some simple descriptive statistics
-
+import numpy as np
 
 class LogFileStatistics:
     
@@ -16,6 +16,8 @@ class LogFileStatistics:
             nr_list[ (l-int(l/4))-1 ],
             nr_list[ l-1 ])
     
+    def mean_time_on_url(self, url):
+        return np.around(np.median(self.log_parser.urls_times[url]), 1)
     
     def output_some_statistics(self):
         print "Sessions: ", self.log_parser.get_session_count()

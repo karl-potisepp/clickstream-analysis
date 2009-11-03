@@ -31,24 +31,30 @@ def analyse_clickstream(paths, support):
     # sessions from the parser    
     transactions = [session for session in parser.get_simple_sessions() ]
 
+    data = apriori.extract_itemsets(transactions, min_support)
     
-    print "="*80
-    # extract all itemsets with support => min_support
-    rules = apriori.extract_itemsets(transactions, min_support)
-    # find supports for itemsets from last step
-    items = apriori.calculate_supports(rules, transactions)
-    # print supports
-    for n, itemset in items:
-        print n, itemset
-    print "="*80
+  
+    import clustering
+    id = clustering.cluster(data, int(len(data)**0.5+1))
+    clustering.print_results(data, id, stats)
     
-    
-    from fpgrowth import find_frequent_itemsets
-    items = find_frequent_itemsets(transactions, min_support)
-    for itemset in items:
-        print itemset
-    
+    import pylab
+    for url in apriori.freq_item_count(transactions, min_support):
+        lens = sorted(parser.urls_times[url])
+        pylab.hist(lens, bins=config.session_timeout)
+        pylab.savefig(config.OUTPUT+url+".png")
+
 """
+from fpgrowth import find_frequent_itemsets
+data = []
+items = find_frequent_itemsets(transactions, min_support)
+for itemset in items:
+    data.append(itemset)
+import clustering
+id = clustering.cluster(data)
+clustering.print_results(data, id)        
+    
+
 def output_stats():    
     import pylab
     lens = sorted([len(session) for session in transactions])
@@ -63,8 +69,10 @@ def read_opts(argv):
     support = config.support    
     try:
         opts, args = getopt.getopt(argv, 's:', ["support"])
+        
         if len(args) == 1:
             logfile = args[0]
+        
         
         support = config.support
         for o, a in opts:
@@ -84,12 +92,15 @@ def read_opts(argv):
         print "Error: " + str(err)
         sys.exit(2)    
     
-    if logfile is not None and os.path.isdir(logfile) :
-        filelist = map(lambda x: os.path.join(logfile, x), os.listdir(logfile))
-        filelist = filter(lambda x: os.path.isfile(x), filelist)
-    elif logfile is not None:
-        filelist = [logfile]
-
+    if logfile is not None:
+        if os.path.isdir(logfile) :
+            
+            filelist = map(lambda x: os.path.join(logfile, x), os.listdir(logfile))
+            filelist = filter(lambda x: os.path.isfile(x), filelist)
+        else:
+            filelist = [logfile]
+    
+    
     return filelist, support
 
         
@@ -98,8 +109,5 @@ def read_opts(argv):
 
 if __name__ == "__main__":
     files, support = read_opts(sys.argv[1:])
-
     analyse_clickstream(files, support)
 
-
-    

@@ -33,10 +33,13 @@ def analyse_clickstream(paths, support):
 
     data = apriori.extract_itemsets(transactions, min_support)
     
+    #leave only maximal itemsets
+    data = apriori.extract_maximal_itemsets(data)
+    
   
-    import clustering
-    id = clustering.cluster(data, int(len(data)**0.5+1))
-    clustering.print_results(data, id, stats)
+    #import clustering
+    #id = clustering.cluster(data, int(len(data)**0.5+1))
+    #clustering.print_results(data, id, stats)
     
     import pylab
     for url in apriori.freq_item_count(transactions, min_support):

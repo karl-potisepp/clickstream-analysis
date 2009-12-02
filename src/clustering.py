@@ -22,7 +22,8 @@ def print_results(labels, clusterids, stats):
         for itemset in cluster_data:
             print "[",
             for item in itemset:
-                s = stats.mean_time_on_url(item)
+                #TODO
+                s = 0
                 print item + "("+str(s)+"), ",
             print "]" 
         print "="*60

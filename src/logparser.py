@@ -1,9 +1,11 @@
 # -*- coding: utf_8 -*-
 
 import uuid
-import config
 from datetime import datetime
 import re
+
+import config
+import apachelogs
 
 class LogParser:
     
@@ -18,17 +20,35 @@ class LogParser:
     # set for urls
     urls = set([])
 
-    #dictionary for storing the interval in seconds between request for an url and last request in that session
-    #key - url
-    #value - list of intervals
-    urls_times = {}
-
     count = 0
     
     
     def __init__(self, apache_log_file, ip_blacklist = []):
         self.apache_log_file = apache_log_file
         self.ip_blacklist = ip_blacklist
+
+    def __format_url(self, line):
+        
+        #format URLs so that equivalent URLs would always be same
+        
+        #strip parts starting with ? from urls
+        qmark_index = line.url.find("?")
+        if qmark_index != -1:
+            line.url = line.url[0:qmark_index]
+        #strip slash from end of url
+        
+        if len(line.url) > 0 and line.url[len(line.url) - 1] == "/":
+            line.url = line.url[0:len(line.url) - 1]
+        
+        if len(line.url) > 0 and line.url[0] == "/":
+            line.url = line.url[1:]
+        
+        line.url = line.url.replace("/", "_")
+        if len(line.url) == 0:
+            line.url = "avaleht"
+        
+        line.url = re.sub(r'[^\w]', '', line.url)
+
     
     def parse(self):
 
@@ -60,66 +80,33 @@ class LogParser:
             #END checks whether line is useful or not
     
     
-            #format URLs so that equivalent URLs would always be same        
-    
-            
-            #strip parts starting with ? from urls
-            qmark_index = line.url.find("?")
-            if qmark_index != -1:
-                line.url = line.url[0:qmark_index]
-            
-            #strip slash from end of url
-            if len(line.url) > 0 and line.url[len(line.url)-1] == "/": 
-                line.url = line.url[0:len(line.url)-1]
-                
-            if len(line.url) > 0 and line.url[0] == "/": 
-                line.url = line.url[1:]
-            
-            line.url = line.url.replace("/", "_")
-            if len(line.url) == 0:
-                line.url = "avaleht"
-            line.url = re.sub(r'[^\w]', '', line.url)
-            #END format URLs
+            self.__format_url(line)
     
             #add URL to list of URLs
             self.urls.add(line.url)
+    
             line.time = line.time.split()[0]
             line.date = datetime.strptime(line.time, '%d/%b/%Y:%H:%M:%S')
     
             #here we add a tuple of (date of request, unique id)
             #to correspond to an IP address in the last_ip dictionary
             last_ip.setdefault(line.ip, (line.date, uuid.uuid4().hex))
-            
             (last_time_for_ip, last_session_for_ip) = last_ip[line.ip]
             
             delta =  line.date - last_time_for_ip
-    
 
             if delta.seconds  > config.session_timeout:
                 sess_key =  uuid.uuid4().hex
             else:
                 sess_key =  last_session_for_ip
     
-            #to calculate the time spent viewing the url in hand, we must know 
-            #the time of the next click within this session
-            #so we must have a variable for each session storing the url of it's last request
-    
-            #if the last url for the current session is known
-            #then delta.seconds is the amount of seconds spent viewing that url
-            if sess_key in last_session_url:            
-                if line.url in self.urls_times:
-                    self.urls_times[line.url].append(delta.seconds)
-                else:
-                    self.urls_times[line.url] = [delta.seconds]            
-                
-    
-            last_session_url.setdefault(sess_key, line.url)
         
+            last_session_url.setdefault(sess_key, line.url)
             last_ip[line.ip] = (line.date, sess_key)
     
             #add line to sessions dictionary
             #if session doesn't exist in sessions, then initialize it
-            self.sessions.setdefault(sess_key, []).append(line)
+            self.sessions.setdefault(sess_key, apachelogs.UserSession(sess_key)).append(line)
     
             self.count +=1
 
@@ -169,7 +156,7 @@ class LogParser:
         simple_sessions = []
         for s in self.sessions.values():
             session = []
-            for line in s:
+            for line in s.lines:
                 session.append(line.url)
             simple_sessions.append(session)
         return simple_sessions

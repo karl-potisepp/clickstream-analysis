@@ -2,7 +2,7 @@
 import sys, getopt, os
 
 import apachelogs, logparser
-import apriori, statistics
+import apriori, statistics, tree
 import config
 
 
@@ -36,16 +36,12 @@ def analyse_clickstream(paths, support):
     #leave only maximal itemsets
     data = apriori.extract_maximal_itemsets(data)
     
-  
+    mf = tree.mf(data)
+    mr = tree.mr(data, mf)
     #import clustering
     #id = clustering.cluster(data, int(len(data)**0.5+1))
     #clustering.print_results(data, id, stats)
     
-    import pylab
-    for url in apriori.freq_item_count(transactions, min_support):
-        lens = sorted(parser.urls_times[url])
-        pylab.hist(lens, bins=config.session_timeout)
-        pylab.savefig(config.OUTPUT+url+".png")
 
 """
 from fpgrowth import find_frequent_itemsets
@@ -97,12 +93,10 @@ def read_opts(argv):
     
     if logfile is not None:
         if os.path.isdir(logfile) :
-            
             filelist = map(lambda x: os.path.join(logfile, x), os.listdir(logfile))
             filelist = filter(lambda x: os.path.isfile(x), filelist)
         else:
             filelist = [logfile]
-    
     
     return filelist, support
 

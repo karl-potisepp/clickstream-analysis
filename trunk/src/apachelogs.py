@@ -87,8 +87,8 @@ class UserSession:
     
     def __init__(self, id, lines = []):
         self.lines = lines
-        self.times_on_page = {}
-        self.page_set = set([])
+        ##self.times_on_page = {}
+        ##self.page_set = set([])
         
     
     def append(self, line):

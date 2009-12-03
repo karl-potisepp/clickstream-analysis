@@ -14,6 +14,7 @@ filename = [
     "math-access_log.4"]
     
 filename.reverse()
+filename = filename[:1]
 DATA = "../../data/"
 OUTPUT = "../../output/"
 paths = [DATA+f for f in filename]

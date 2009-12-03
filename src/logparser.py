@@ -66,7 +66,6 @@ class LogParser:
     
         for line in self.apache_log_file:
             
-            #checks whether line is useful or not
     
             #whether or not the requested file is robots.txt
             #if it is, we add the ip to the blacklist
@@ -77,7 +76,6 @@ class LogParser:
             if self.filter(line):
                 continue
     
-            #END checks whether line is useful or not
     
     
             self.__format_url(line)
@@ -94,7 +92,6 @@ class LogParser:
             (last_time_for_ip, last_session_for_ip) = last_ip[line.ip]
             
             delta =  line.date - last_time_for_ip
-
             if delta.seconds  > config.session_timeout:
                 sess_key =  uuid.uuid4().hex
             else:
@@ -106,7 +103,7 @@ class LogParser:
     
             #add line to sessions dictionary
             #if session doesn't exist in sessions, then initialize it
-            self.sessions.setdefault(sess_key, apachelogs.UserSession(sess_key)).append(line)
+            self.sessions.setdefault(sess_key, []).append(line)
     
             self.count +=1
 
@@ -156,8 +153,9 @@ class LogParser:
         simple_sessions = []
         for s in self.sessions.values():
             session = []
-            for line in s.lines:
+            for line in s:
                 session.append(line.url)
             simple_sessions.append(session)
+        
         return simple_sessions
         

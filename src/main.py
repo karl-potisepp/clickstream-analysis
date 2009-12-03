@@ -30,14 +30,20 @@ def analyse_clickstream(paths, support):
     
     # sessions from the parser    
     transactions = [session for session in parser.get_simple_sessions() ]
-
+    
+    mf = tree.mf(transactions)
+    for seq in mf:
+        print seq
+    mr = tree.mr(transactions, mf)
+    
     data = apriori.extract_itemsets(transactions, min_support)
     
+    print data
     #leave only maximal itemsets
     data = apriori.extract_maximal_itemsets(data)
     
-    mf = tree.mf(data)
-    mr = tree.mr(data, mf)
+    
+
     #import clustering
     #id = clustering.cluster(data, int(len(data)**0.5+1))
     #clustering.print_results(data, id, stats)

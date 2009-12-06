@@ -45,12 +45,13 @@ def candidate_gen(k_itemset, itemset_size):
 
 # prune the candidates
 def prune(transactions, k_itemset, min_support):
+    hold = []
     for candidate in k_itemset:
         #if the number of transactions containing the candidate itemset is less than 
         #min_support, then the candidate is pruned
-        if len([trans for trans in transactions if set(candidate)<=set(trans)])<min_support:
-            k_itemset.remove(candidate)
-    return k_itemset
+        if len([trans for trans in transactions if set(candidate)<=set(trans)])>=min_support:
+            hold.append(candidate)
+    return hold
 
 # extracts all itemsets with support above min_support
 def extract_itemsets(transactions, min_support):

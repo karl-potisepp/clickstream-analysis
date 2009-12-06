@@ -31,35 +31,28 @@ def analyse_clickstream(paths, support):
     # sessions from the parser    
     transactions = [session for session in parser.get_simple_sessions() ]
     
-    mf = tree.mf(transactions)
-    for seq in mf:
-        print seq
-    mr = tree.mr(transactions, mf)
+    lrs, mfs = tree.large_reference_sequences(transactions, 300)
     
+    print "Large reference sequences: "
+    for r in  lrs:
+        print "\t",r
+                
+        
+    
+    print "Apriori: "
     data = apriori.extract_itemsets(transactions, min_support)
-    
-    print data
-    #leave only maximal itemsets
-    data = apriori.extract_maximal_itemsets(data)
-    
+    for itemset in data:
+        print "\t", itemset
     
 
-    #import clustering
-    #id = clustering.cluster(data, int(len(data)**0.5+1))
-    #clustering.print_results(data, id, stats)
-    
+    print "Fpgrowth: "
+    from fpgrowth import find_frequent_itemsets
+    items = find_frequent_itemsets(transactions, min_support)
+    for itemset in items:
+        print "\t", itemset
+
 
 """
-from fpgrowth import find_frequent_itemsets
-data = []
-items = find_frequent_itemsets(transactions, min_support)
-for itemset in items:
-    data.append(itemset)
-import clustering
-id = clustering.cluster(data)
-clustering.print_results(data, id)        
-    
-
 def output_stats():    
     import pylab
     lens = sorted([len(session) for session in transactions])

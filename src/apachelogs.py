@@ -83,28 +83,5 @@ class ApacheLogFile:
                 except:
                     print "NON_COMPLIANT_FORMAT: ", line
                     
-class UserSession:
-    
-    def __init__(self, id, lines = []):
-        self.lines = lines
-        ##self.times_on_page = {}
-        ##self.page_set = set([])
-        
-    
-    def append(self, line):
-        self.lines.append(line)
-            
-    def contains_rule(self, rule):
-        return set(rule) <= self.page_set
-    
-    def get_times_on_sequence(self, rule):
-        times = []
-        for page in rule:
-            times.append(self.summarize(self.times_on_page[page]))
-        return times
-    
-    def summarize(self, time_list):
-        return np.median(time_list)
-            
         
                         

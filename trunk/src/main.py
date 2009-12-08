@@ -30,6 +30,13 @@ def analyse_clickstream(paths, support):
     
     # sessions from the parser    
     transactions = [session for session in parser.get_simple_sessions() ]
+
+    # output all sessions into a file
+    # row format : "page1" "page2" "page3" ... "pageN"
+    sessions_file = open('../../output/sessions.txt', 'w')
+    for session in transactions:
+        line = ",".join(session) + '\n'
+        sessions_file.write(line)
     
     lrs, mfs = tree.large_reference_sequences(transactions, 300)
     

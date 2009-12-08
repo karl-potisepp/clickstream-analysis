@@ -19,17 +19,20 @@ def analyse_clickstream(paths, support):
     stats = statistics.LogFileStatistics(parser)
     stats.output_some_statistics()
     
-
+    # sessions from the parser    
+    transactions = [session for session in parser.get_simple_sessions() if len(session) > 1]
+    
+    print "db size after reduction:", len(transactions)
+    
     # if support is given as a float, it is presumed to be relative support
     # i.e. the minimum percentage of transactions to have a certain itemset
     # the percentage is then converted into absolute support
     if type(support) is float:
-        min_support = int(parser.get_session_count() * support)
+        min_support = int(len(transactions) * support)
     else:
         min_support = support
     
-    # sessions from the parser    
-    transactions = [session for session in parser.get_simple_sessions() ]
+
 
     # output all sessions into a file
     # row format : "page1" "page2" "page3" ... "pageN"
@@ -38,12 +41,11 @@ def analyse_clickstream(paths, support):
         line = ",".join(session) + '\n'
         sessions_file.write(line)
     
-    lrs, mfs = tree.large_reference_sequences(transactions, 300)
+    lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     
     print "Large reference sequences: "
     for r in  lrs:
         print "\t",r
-                
         
     
     print "Apriori: "
@@ -51,7 +53,7 @@ def analyse_clickstream(paths, support):
     for itemset in data:
         print "\t", itemset
     
-
+"""
     print "Fpgrowth: "
     from fpgrowth import find_frequent_itemsets
     items = find_frequent_itemsets(transactions, min_support)
@@ -59,7 +61,7 @@ def analyse_clickstream(paths, support):
         print "\t", itemset
 
 
-"""
+
 def output_stats():    
     import pylab
     lens = sorted([len(session) for session in transactions])

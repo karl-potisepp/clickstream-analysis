@@ -152,7 +152,6 @@ def extract_maximal_itemsets(items):
         for remaining in items:
             if is_substring(remaining, item):
                 items.remove(remaining)
-        
     
     return closed
 

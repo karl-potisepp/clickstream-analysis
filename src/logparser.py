@@ -55,18 +55,20 @@ class LogParser:
         #dictionary for storing the last url for every session
         #key - session id
         #value - last url for that session
-        last_session_url = {}   
-    
+        last_session_url = {}
+
         #dictionary containing tuples (time, unique id) for IPs
         #key - IP
         #value - (time of last request, unique id)
-        last_ip = {}    
-    
-        
+        last_ip = {}
+
+        #dictionary for storing the last http_response_code for every session
+        #key - session id
+        #value - last http_response_code for that session
+        last_session_http_code = {}
     
         for line in self.apache_log_file:
             
-    
             #whether or not the requested file is robots.txt
             #if it is, we add the ip to the blacklist
             if line.url.find("robots.txt") != -1:
@@ -75,9 +77,7 @@ class LogParser:
             #whether the line should be discarded or not
             if self.filter(line):
                 continue
-    
-    
-    
+        
             self.__format_url(line)
     
             #add URL to list of URLs
@@ -96,10 +96,17 @@ class LogParser:
                 sess_key =  uuid.uuid4().hex
             else:
                 sess_key =  last_session_for_ip
-    
-        
+
+            #if last request in this session was met with http code 302, then
+            #this line is probably a redirect and should be discarded
+            code = last_session_http_code.get(sess_key, 0)
+            if int(code) == 302 and  int(line.http_response_code) == 200 and delta.seconds < 5:
+                continue        
+
             last_session_url.setdefault(sess_key, line.url)
             last_ip[line.ip] = (line.date, sess_key)
+            # add last session http code
+            last_session_http_code.setdefault(sess_key, line.http_response_code)
     
             #add line to sessions dictionary
             #if session doesn't exist in sessions, then initialize it
@@ -138,6 +145,7 @@ class LogParser:
     
         #no error pages
         result = result or line.url.find("/errorleht") != -1
+        #result = result or line.http_response_code == 302
     
         #no HTTP OPTIONS
         result = result or line.http_method.find("OPTIONS") != -1

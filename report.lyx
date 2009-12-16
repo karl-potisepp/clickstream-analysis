@@ -70,5 +70,94 @@ This document is a result of a small project done in the Combinatiorial
  More detailed results and description of the work done follow.
 \end_layout
 
+\begin_layout Paragraph*
+Extracting useful data
+\end_layout
+
+\begin_layout Standard
+The raw data was in the form of several .log files containing anonymised
+ IP address, time of request, type of request (either GET or OPTIONS), the
+ page requested, and the HTTP return code for it.
+ The earliest request contained in the log files was dated 16th of August,
+ 2009, the latest 8th of December on the same year.
+ Sample lines from one of the log files can be seen below:
+\end_layout
+
+\begin_layout Quotation
+\paragraph_spacing single
+
+\family typewriter
+1 - - [13/Sep/2009:06:14:58 +0300] "OPTIONS / HTTP/1.1" 200 13511 
+\end_layout
+
+\begin_layout Quotation
+\paragraph_spacing single
+
+\family typewriter
+7 - - [13/Sep/2009:06:15:22 +0300] "GET /inimesed/Instituudid HTTP/1.1" 200
+ 20741 
+\end_layout
+
+\begin_layout Quotation
+\paragraph_spacing single
+
+\family typewriter
+7 - - [13/Sep/2009:06:15:22 +0300] "GET /varia/killustik HTTP/1.1" 200 33579
+\end_layout
+
+\begin_layout Standard
+Since our task was to try and find possible ways of improving the math.ut.ee
+ experience for users, we decided to filter out requests that did not contain
+ any real information.
+ For this we first used an open source Apache log file parser written in
+ Python and read the log files to memory.
+ A line was discarded if:
+\end_layout
+
+\begin_layout Itemize
+...the URL pointed to a file that was an error page, someone's personal website
+ or not a stand-alone web page (such as image files, JavaScript and stylesheets).
+\end_layout
+
+\begin_layout Itemize
+...the line contained OPTIONS instead of GET (i.e.
+ was not a page request).
+\end_layout
+
+\begin_layout Itemize
+...the request originated from an IP address previously blacklisted for requesting
+ 
+\begin_inset Quotes eld
+\end_inset
+
+robots.txt
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In addition to that, URLs were also altered, removing traces of any HTTP
+ GET attributes.
+ After performing this procedure we were left with only data pertaining
+ to human users' requests for individual pages.
+ The next step was to group requests into sessions to create a dataset for
+ running frequent itemset detection algorithms.
+ To achieve this, we grouped all URLs by first looking at the originating
+ IP address, then the time interval between consecutive requests.
+ On the side we also calculated the probable average amount of time spent
+ on one page by finding the amount of seconds between the original request
+ and the next request from the same IP within the same session.
+\end_layout
+
+\begin_layout Paragraph
+Searching for frequent itemsets
+\end_layout
+
+\begin_layout Standard
+On the extracted data set we ran several kinds of frequent itemset algorithms.
+\end_layout
+
 \end_body
 \end_document

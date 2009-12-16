@@ -3,6 +3,7 @@
 \documentclass[english]{article}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
+\usepackage{setspace}
 
 \usepackage{babel}
 
@@ -30,4 +31,56 @@ in the presentation layer. In order to achieve this, we used a Python-based
 Apache log parser and experimented with a number of data mining tools
 (such as Apriori and FPgrowth algorithms). More detailed results and
 description of the work done follow.
+
+
+\paragraph*{Extracting useful data}
+
+The raw data was in the form of several .log files containing anonymised
+IP address, time of request, type of request (either GET or OPTIONS),
+the page requested, and the HTTP return code for it. The earliest
+request contained in the log files was dated 16th of August, 2009,
+the latest 8th of December on the same year. Sample lines from one
+of the log files can be seen below:
+\begin{quotation}
+\begin{singlespace}
+\texttt{1 - - {[}13/Sep/2009:06:14:58 +0300{]} \textquotedbl{}OPTIONS
+/ HTTP/1.1\textquotedbl{} 200 13511 }
+
+\texttt{7 - - {[}13/Sep/2009:06:15:22 +0300{]} \textquotedbl{}GET
+/inimesed/Instituudid HTTP/1.1\textquotedbl{} 200 20741 }
+
+\texttt{7 - - {[}13/Sep/2009:06:15:22 +0300{]} \textquotedbl{}GET
+/varia/killustik HTTP/1.1\textquotedbl{} 200 33579}\end{singlespace}
+
+\end{quotation}
+Since our task was to try and find possible ways of improving the
+math.ut.ee experience for users, we decided to filter out requests
+that did not contain any real information. For this we first used
+an open source Apache log file parser written in Python and read the
+log files to memory. A line was discarded if:
+\begin{itemize}
+\item ...the URL pointed to a file that was an error page, someone's personal
+website or not a stand-alone web page (such as image files, JavaScript
+and stylesheets).
+\item ...the line contained OPTIONS instead of GET (i.e. was not a page
+request).
+\item ...the request originated from an IP address previously blacklisted
+for requesting {}``robots.txt''.
+\end{itemize}
+In addition to that, URLs were also altered, removing traces of any
+HTTP GET attributes. After performing this procedure we were left
+with only data pertaining to human users' requests for individual
+pages. The next step was to group requests into sessions to create
+a dataset for running frequent itemset detection algorithms. To achieve
+this, we grouped all URLs by first looking at the originating IP address,
+then the time interval between consecutive requests. On the side we
+also calculated the probable average amount of time spent on one page
+by finding the amount of seconds between the original request and
+the next request from the same IP within the same session.
+
+
+\paragraph{Searching for frequent itemsets}
+
+On the extracted data set we ran several kinds of frequent itemset
+algorithms.
 \end{document}

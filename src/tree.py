@@ -56,10 +56,25 @@ def mf(data):
 def large_reference_sequences(data, min_support):
     mfs = mf(data)
     itemsets = extract_itemsets(mfs, min_support)
+    some_stats =  prioritize(mfs)
     #return extract_maximal_itemsets(itemsets), mfs
-    return itemsets, mfs
+    return itemsets, some_stats
 
 
+def prioritize(mfs):
+    freq_list = defaultdict(lambda: 0)
+    
+    #transaction contains of multiple independent forward sets
+    for trans in mfs:
+        trans_set = set([])
+        for maximal_forwards in trans:
+            trans_set.add(tuple(maximal_forwards))
+        
+        # only once each item from transaction
+        for item in trans_set:
+            freq_list[item] += 1
+            
+    return sorted(freq_list.iteritems(), key=lambda (k,v):(v,k), reverse=True)
 
 # function for finding all frequent items from transactions
 def freq_item_count(transactions, min_support):

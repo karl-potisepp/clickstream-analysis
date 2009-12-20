@@ -40,25 +40,33 @@ def analyse_clickstream(paths, support):
     for session in transactions:
         line = ",".join(session) + '\n'
         sessions_file.write(line)
+
+    import codebook
+    results = codebook.fpm(transactions)
+
+    print "FPM: "
+    for r in  results:
+        print "\t",r
     
     lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     
     print "Large reference sequences: "
     for r in  lrs:
         print "\t",r
-        
     
+    
+    print "Large forward refernces, by count: "
+    for item, support in  mfs:
+        if support > 20:
+            print "\t",support, item
+        
+"""    
     print "Apriori: "
-    data = apriori.extract_itemsets(transactions, min_support)
+    data = apriori.extract_closed_itemsets(apriori.extract_itemsets(transactions, min_support))
     for itemset in data:
         print "\t", itemset
-    
+"""    
 """
-    print "Fpgrowth: "
-    from fpgrowth import find_frequent_itemsets
-    items = find_frequent_itemsets(transactions, min_support)
-    for itemset in items:
-        print "\t", itemset
 
 
 

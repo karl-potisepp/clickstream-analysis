@@ -17,8 +17,6 @@ Sample use -- counting the number of 40xs seen:
 
 import re
 import fileinput
-import numpy  as np
-
 
 
 class ApacheLogLine:
@@ -83,5 +81,3 @@ class ApacheLogFile:
                 except:
                     print "NON_COMPLIANT_FORMAT: ", line
                     
-        
-                        

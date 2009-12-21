@@ -5,7 +5,6 @@ from datetime import datetime
 import re
 
 import config
-import apachelogs
 
 class LogParser:
     

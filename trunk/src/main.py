@@ -36,18 +36,18 @@ def analyse_clickstream(paths, support):
 
     # output all sessions into a file
     # row format : "page1" "page2" "page3" ... "pageN"
-    sessions_file = open('../../output/sessions.txt', 'w')
+    sessions_file = open(config.OUTPUT+"sessions.txt", 'w')
     for session in transactions:
         line = ",".join(session) + '\n'
         sessions_file.write(line)
-
+    '''
     import codebook
     results = codebook.fpm(transactions)
 
     print "FPM: "
     for r in  results:
         print "\t",r
-    
+    '''
     lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     
     print "Large reference sequences: "
@@ -60,12 +60,10 @@ def analyse_clickstream(paths, support):
         if support > 20:
             print "\t",support, item
         
-"""    
     print "Apriori: "
     data = apriori.extract_closed_itemsets(apriori.extract_itemsets(transactions, min_support))
     for itemset in data:
         print "\t", itemset
-"""    
 """
 
 

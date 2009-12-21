@@ -114,7 +114,7 @@ class LogParser:
             self.count +=1
 
     
-    def get_session(self):
+    def get_sessions(self):
         return self.sessions
     
     def get_line_count(self):

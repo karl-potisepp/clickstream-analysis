@@ -21,3 +21,5 @@ paths = [DATA+f for f in filename]
 
 range_min = 1
 range_max = 100
+
+filter_fn = lambda x: len(x) > 1

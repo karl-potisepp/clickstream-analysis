@@ -2,7 +2,7 @@
 import sys, getopt, os
 
 import apachelogs, logparser
-import apriori, statistics, tree
+import apriori, statistics, tree, fsm_wrapper
 import config
 
 
@@ -40,16 +40,16 @@ def analyse_clickstream(paths, support):
     for session in transactions:
         line = ",".join(session) + '\n'
         sessions_file.write(line)
-    '''
-    import codebook
-    results = codebook.fpm(transactions)
 
+
+
+    results = fsm_wrapper.fpm(transactions, min_support)
     print "FPM: "
     for r in  results:
         print "\t",r
-    '''
-    lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     
+    
+    lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     print "Large reference sequences: "
     for r in  lrs:
         print "\t",r
@@ -57,44 +57,32 @@ def analyse_clickstream(paths, support):
     
     print "Large forward refernces, by count: "
     for item, support in  mfs:
-        if support > 20:
+        if support > 50:
             print "\t",support, item
         
     print "Apriori: "
     data = apriori.extract_closed_itemsets(apriori.extract_itemsets(transactions, min_support))
     for itemset in data:
         print "\t", itemset
-"""
 
 
-
-def output_stats():    
-    import pylab
-    lens = sorted([len(session) for session in transactions])
-    pylab.hist(lens,bins=(range_max-range_min), range=(range_min,range_max))
-    pylab.show()
-"""
 
 
 def read_opts(argv):
-    filelist = config.paths
     logfile = None
+    filelist = config.paths
     support = config.support    
     try:
         opts, args = getopt.getopt(argv, 's:', ["support"])
-        
         if len(args) == 1:
             logfile = args[0]
         
-        
         support = config.support
         for o, a in opts:
-            #support
             if o in ("-s", "--support"):
                 if a.find(".")!=-1:
                     support = float(a)
-                    if support > 1.0:
-                        raise getopt.GetoptError("support cannot be bigger than 1.0") 
+                    if support > 1.0: raise getopt.GetoptError("support cannot be bigger than 1.0") 
                 else:
                     support = int(a)
             else:
@@ -114,11 +102,7 @@ def read_opts(argv):
     
     return filelist, support
 
-        
-            
-    
-
+   
 if __name__ == "__main__":
     files, support = read_opts(sys.argv[1:])
     analyse_clickstream(files, support)
-

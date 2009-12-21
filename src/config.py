@@ -16,7 +16,7 @@ filename = [
 filename.reverse()
 #filename = filename[:1]
 DATA = "../../data/nov-det/"
-OUTPUT = "c:/tmp/"
+OUTPUT = "../../output/"
 paths = [DATA+f for f in filename]
 
 range_min = 1

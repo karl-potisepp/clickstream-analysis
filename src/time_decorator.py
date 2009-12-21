@@ -25,32 +25,24 @@ def deocarate_timings(patterns, log):
 
 
 def contains(session, pattern):
+  if len(pattern) == 0: return -1
   """checks where pattern is present in transactions"""
   i = 0
   j = 0
+  print session
   s = [x.url for x in session]
   for req in s:
-    print req
-    if req.url == pattern[i]:
+    if req == pattern[i]:
       i = i + 1
     else:
       i = 0
-    
-    if len(pattern) == i:
-      
-      print j, s, pattern
-      return j
-     
+    if len(pattern) == i: return j
     j+=1  
 
   
   return -1
 
-def is_substring(candidate, maximal_forwards):
-  s_mf = ",".join(maximal_forwards)
-  s_candidate = ",".join(candidate)
-  return s_mf.find(s_candidate) != -1
-  
+
 class Timing:
   
   def __init__(self, pattern):
@@ -60,4 +52,4 @@ class Timing:
       self.times.append(0)
     
   def sum(self, pos, transaction):
-    pass  
+    pass

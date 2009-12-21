@@ -166,3 +166,9 @@ class LogParser:
         
         return simple_sessions
         
+class Session:
+  def __init__(self, session):
+    self.pages = [x.url for x in session]
+    self.times = [x.time for x in session]
+  
+  

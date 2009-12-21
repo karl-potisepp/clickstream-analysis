@@ -2,7 +2,6 @@
 # found from public domain
 # guess not very fast
 
-# count the frequent 1 itemsets
 import operator
 
 # function for finding all frequent items from transactions
@@ -90,17 +89,6 @@ def calculate_supports(rules, transactions):
     annotated = sorted(annotated, key=operator.itemgetter(0), reverse=True)        
     return annotated
 
-#function to remove all non-maximal itemsets from rules
-def extract_maximal_itemsets(rules):
-
-    for superset in rules:
-        for subset in rules:
-            if set(superset)>=set(subset) and len(superset)!=len(subset):
-                rules.remove(subset)
-
-    return rules
-
-
 def extract_closed_itemsets(items):
     
     closed = []
@@ -114,10 +102,3 @@ def extract_closed_itemsets(items):
         
     
     return closed
-
-def print_rules(itemsets):
-    
-    for rule in itemsets:
-        print rule
-
-

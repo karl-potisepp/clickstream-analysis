@@ -29,3 +29,9 @@ class LogFileStatistics:
         #long people stayed on one page
         for url, secs in self.log_parser.urls_times.iteritems():
             print url, self.__five_num_summary(secs), secs
+            
+    def session_len_graph(self, transactions):
+      import pylab
+      lens = sorted([len(session) for session in transactions])
+      pylab.hist(lens,bins=(range_max-range_min), range=(range_min,range_max))
+      pylab.show()

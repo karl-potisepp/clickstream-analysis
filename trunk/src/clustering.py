@@ -1,5 +1,6 @@
 import Pycluster
 import numpy
+
 def cluster(data, k=3):
     n = len(data)
     dist = numpy.zeros((n, n), numpy.float)

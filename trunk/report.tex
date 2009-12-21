@@ -1,86 +1,117 @@
-\documentclass[english,a4paper]{article}
-
-\usepackage[T1]{fontenc}
-\usepackage[latin9]{inputenc}
-\usepackage[english]{babel}
-\usepackage{lmodern}
+\documentclass{article}
 
 \begin{document}
 
-\title{Click-stream data analysis of web access logs}
-\author{Riivo Kikas, Karl Potisepp}
-\date{\today}
-\maketitle
+\ December 21, 2009 \title{Click-stream data analysis of web access
+logs}\author{Riivo Kikas, Karl Potisepp\\
+}\maketitle
 
 \begin{abstract}
-In this paper, we will conduct a case study of mining frequent user access patterns.
-
+  In this paper, we will conduct a case study of mining frequent user access
+  patterns.
 \end{abstract}
 
-\section{Introduction}
-Understanding how users navigate and browse through web sites is important for many aspects, such as content recommendation, personalization and targeted advertising. Even more, it helps to evaluate usability and provide real world input to better organization of content and web site redesign. 
+\section{Introduction} Understanding how users navigate and browse through web
+sites is important in many aspects, such as content recommendation,
+personalisation and targeted advertising. Even more, it helps to evaluate
+usability and provide real world input to better organise of content and
+redesign the web site.
 
-The aim of this report is to illustrate pattern mining from web logs with example of Computer Science department web access logs.  Motivation for this study was to find meaningful use-cases from log files and identify possible bottlenecks in the presentation layer and provide some input for user interface redesign. Main aim is to discover the most frequent sequence rules among the on the visitors dataset. The nature of pattern mining carried out was more of exploratory concentrating on frequent item sets and sequence mining.
+The aim of this report is to illustrate pattern mining from web logs with
+example of web access logs from the web site of the Computer Science
+department of the University of Tartu. Motivation for this study was to find
+meaningful use-cases from log files and identify possible bottlenecks in the
+presentation layer and provide some input for user interface redesign. The
+primary objective was to discover the most frequent sequences by analysing the
+visitors' browsing sessions. The nature of pattern mining carried out was
+mainly exploratory, concentrating on frequent item sets and sequence mining.
 
 Write here about sessions and data.
 
-\section{Data preparation and session identification}
-Input data for click-stream mining is in the form of standard Apache log files, specially in Common Log Format. This format provides information about from which IP address was request made, request data, page requested and returned HTTP status code.
+\section{Data preparation and session identification} Input data for
+click-stream mining is in the form of standard Apache log files, more
+appropriately Common Log Format, which provides information about the
+originating IP address or the request, the timestamp of the request, the page
+requested and the resulting HTTP status code.
 
-\begin{figure}
-\begin{verbatim}
+\begin{figure}[h]
+  
+  \begin{verbatim}
 192.168.1.245 - - [13/Sep/2009:04:07:56 +0300] "GET /ati/struktuur/tiiger HTTP/1.0" 200 19828
 192.168.1.215 - - [13/Sep/2009:04:09:30 +0300] "GET / HTTP/1.0" 200 13511
 192.168.1.215 - - [13/Sep/2009:04:12:02 +0300] "GET /103369 HTTP/1.0" 200 17367
 192.168.1.215 - - [13/Sep/2009:04:14:40 +0300] "GET /varia/itinfo HTTP/1.0" 200 19411
 \end{verbatim}
-\caption{Example of log file}
+  
+  \caption{Example of log file}
 \end{figure}
 
-There are two important task to be carried out with log data before it can be used for analyzing. First, log files contain all requests made to server
-
-
-
-
-We were interesting only in 
-We added filtering to filter out. A line was discarded if:
-
+There were two important tasks to be carried out with the log data before it
+could be used for analysing. First, since log files contain all requests made
+to the server, we needed to filter out only the requests that interested us. A
+line was discarded if:
 \begin{itemize}
-\item the URL pointed to a file that was an error page, someone's personal website or not a stand-alone web page (such as image files, JavaScript and stylesheets).
-\item All other requests besides POST and GET, such as OPTIONS
-\item the request originated from an IP address previously blacklisted for requesting {}``robots.txt''. We consider them as indexers.
+  \item the URL pointed to a file that was an error page, someone's personal
+  website or not a stand-alone web page (such as image files, JavaScript and
+  stylesheets).
+  
+  \item All other requests besides POST and GET, such as OPTIONS.
+  
+  \item the request originated from an IP address previously blacklisted for
+  requesting ``robots.txt''. We considered them as indexers.
 \end{itemize}
+In addition to that, URLs were also altered, removing traces of any query
+string attributes. Some of the pages were generated dynamically and the query
+string contained non human readable parameters that were different to users,
+but with eliminating several pages and subpages merged into on [WTF??]. One
+example of this is the page listing all the students associated with the
+Computer Science department. At first, the page lets the user choose a major
+from all that are taught in the department. Upon selection, the list of
+students for that major is displayed, however all that changes in the URL is
+the query string. By eliminating the query string, we generalise user
+intentions in broader categories while preserving meaningul information about
+the usage patterns.
 
-In addition to that, URLs were also altered, removing traces of any query strings attributes. Some of the pages were generated dynamically and querystring contained  non human readable parameters that were different to users, but with eliminating several pages and subpages merged into on. One example of this students list pages. First pages states all majors whit url 15124 and some querystring. Now when user selects some major,  students listing is provided. The url does not changes, but querystring does. With eliminating querystring, we generalise user intentions in broader category, but still preservering meaningul information about the url.
+After performing this procedure we were left with only data pertaining to
+human users' requests for individual pages.
 
+The next step was to group user requests made during on visit into sessions.
+Generally, this can be done by providing a cookie to each user with some
+generated UUID and then logging each request and the cookie ID, but since we
+could not modify the existing software stack, we had to use the data that was
+already given. CLF formatted log files do not have an explicit session ID
+stored. To counter this we used a timeout based method to group requests into
+sessions. We consider a string of requests from the same IP address to be in
+same session, if the time between consecutive requests (clicks) is not more
+than $t = 30$ seconds [minutes??]. If time between requests exceeds $t$, we
+consider these requests to be part of a new session. While this method is
+probably not the best, we consider it sufficient as it mimics the way session
+timeouts are measured on many web sites. We also consider it reasonable to
+assume that if an user has not interacted with the server for more than $t$
+minutes, any new interaction from an user from the same IP address can be
+thought of as a new use case scenario.
 
+\section{Basic statistics about the access logs} We used a batch of two log
+files.
 
-After performing this procedure we were left with only data pertaining to human users' requests for individual pages. 
+The earliest request contained in the log files was dated 16th of August,
+2009, the latest 8th of December on the same year.
 
-The next step is to group user requests made during on visit into session. Generally, this can be done by providing cookie to each user with some generated UUID and then logging each request and the cookie ID. But our goal was not to modify existing software stack and use the data already avaliabl. CLF formated log files do not have explicit session ID stored, so this needs to be derived. 
-Simplemest method to extract sessions is to use timeout based metehod. We consider all requests from same IP address to be in same session, if the time between cliks is not more than $t=30$ seconds. If time between requests is larger than $t$, we consider these request into new session. 
-It is the simplemest method available, but might not be the best. 
+\section{Frequent item sets in log files} First and foremost interesting
+question about web session on can ask, are there some pages that users tend to
+visit together during one session?
 
-
-\section{Basic statistics about accesses}
-We used batch of two log files.
-
-The earliest request contained in the log files was dated 16th of August, 2009, the latest 8th of December on the same year. 
-
-\section{Frequent item sets in log files}
-First and foremost interesting question about web session on can ask, are there some pages that users tend to visit together during one session?
-
-problems?,support, 
+problems?,support,
 
 sven idea. reduce sparsity
-
 
 \section{Frequent sequential patterns with timed access}
 
 \section{Maximal forward references}
 
-\section{Evolving patterns through time}
-One interesting aspects of log mining is using temporal data. We carryed out experiments, to see how patterns change thorough time.
+\section{Evolving patterns through time} One interesting aspects of log mining
+is using temporal data. We carryed out experiments, to see how patterns change
+thorough time.
 
 \section{Summary}
 

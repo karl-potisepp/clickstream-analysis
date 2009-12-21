@@ -3,6 +3,7 @@ import sys, getopt, os
 
 import apachelogs, logparser
 import apriori, statistics, tree, fsm_wrapper
+import time_decorator
 import config
 
 
@@ -20,7 +21,7 @@ def analyse_clickstream(paths, support):
     stats.output_some_statistics()
     
     # sessions from the parser    
-    transactions = [session for session in parser.get_simple_sessions() if len(session) > 1]
+    transactions = [session for session in parser.get_simple_sessions() if config.filter_fn(session)]
     
     print "db size after reduction:", len(transactions)
     
@@ -44,18 +45,21 @@ def analyse_clickstream(paths, support):
 
 
     results = fsm_wrapper.fpm(transactions, min_support)
+    times = time_decorator.deocarate_timings(results, parser)
     print "FPM: "
     for r in  results:
         print "\t",r
     
     
     lrs, mfs = tree.large_reference_sequences(transactions, min_support)
+    times = time_decorator.deocarate_timings(lrs, parser)
     print "Large reference sequences: "
     for r in  lrs:
         print "\t",r
     
     
     print "Large forward refernces, by count: "
+    
     for item, support in  mfs:
         if support > 50:
             print "\t",support, item

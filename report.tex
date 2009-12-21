@@ -100,16 +100,21 @@ Frequent itemsets itself do not capture nature of web navigation - sequenatial r
 
 Time decoration
 
+apriori 
+
 \section{Maximal forward references}
 During user navigation, user tend to to back links e.g. go back to page that they have visited before. In some cases these back links can be considered only as navigational feature, not because of user was interested the content.  When we eliminate the back references from web session, we can construct such clickstream that show users target page e.g. user interest.
+
+backward refernces
+apriori
 
 We discovered:
 
 Compared to sequential rules:
 
 
-\section{Evolving patterns through time} O
-ne interesting aspects of log mining is using temporal data. We carried out experiments, to see how patterns change thorough time. When mining school website data, we can consider some periods of interets. August is the pre semester period and students might be looking for information about new professors, timetables, good semester provided upcoming semester. Now when semester starts, it can be assumed that these kinds of aims become outdate and new bevahioural patterns. And again, in decemeber, it is the period of exams and in our case also the period when students must choose their final year project topic and supervisor. To test these hypothesis, we concluded following test. 
+\section{Evolving patterns through time} 
+One interesting aspects of log mining is using temporal data. We carried out experiments, to see how patterns change thorough time. When mining school website data, we can consider some periods of interets. August is the pre semester period and students might be looking for information about new professors, timetables, good semester provided upcoming semester. Now when semester starts, it can be assumed that these kinds of aims become outdate and new bevahioural patterns. And again, in decemeber, it is the period of exams and in our case also the period when students must choose their final year project topic and supervisor. To test these hypothesis, we concluded following test. 
 
 We split up the data set into three.
 
@@ -133,6 +138,7 @@ Eliminated all sessions that do no contain pages AAA, BB, CCC.
 Mine frequent patterns from remaining session.
 
 \section{Summary}
+Methods provided will not scale in web2.0 environments.
 
 \section{Todo}
 Graphs needed

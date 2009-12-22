@@ -21,10 +21,7 @@ def deocarate_timings(patterns, log):
         timings.setdefault(i, Timing(pattern)).sum(pos, trans)
       i+=1
   
-  print "=="
-  for key, value in timings.items():
-    value.output()
-  
+  return timings
   
 
 

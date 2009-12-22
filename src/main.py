@@ -50,13 +50,14 @@ def analyse_clickstream(paths, support):
     for r in  results:
         print "\t",r
     
-    
+  
     lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     times = time_decorator.deocarate_timings(lrs, parser)
     print "Large reference sequences: "
     for r in  lrs:
         print "\t",r
     
+    sys.exit(2)    
     
     print "Large forward refernces, by count: "
     

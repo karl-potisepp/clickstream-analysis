@@ -99,7 +99,7 @@ class LogParser:
             #if last request in this session was met with http code 302, then
             #this line is probably a redirect and should be discarded
             code = last_session_http_code.get(sess_key, 0)
-            if int(code) == 302 and  int(line.http_response_code) == 200 and delta.seconds < 5:
+            if int(code) == 302 and  int(line.http_response_code) == 200 and delta.seconds < 2:
                 continue        
 
             last_session_url.setdefault(sess_key, line.url)

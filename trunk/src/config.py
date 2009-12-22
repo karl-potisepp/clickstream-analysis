@@ -4,7 +4,7 @@ session_timeout = 1800
 
 #if float, then relative is considered
 #if int, then absolute
-support = 0.05
+support = 0.03
 
 filename = [
     "math-access_log",
@@ -14,7 +14,7 @@ filename = [
     "math-access_log.4"]
     
 filename.reverse()
-#filename = filename[:1]
+filename = filename[:1]
 DATA = "../../data/nov-det/"
 OUTPUT = "../../output/"
 paths = [DATA+f for f in filename]

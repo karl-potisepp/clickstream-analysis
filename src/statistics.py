@@ -24,11 +24,6 @@ class LogFileStatistics:
         print "Matching lines: ", self.log_parser.get_line_count()
         print "Number of different urls: ", len(self.log_parser.urls)
     
-    def print_five_number_summary(self):
-        #calculate five number summaries for all urls to find out how 
-        #long people stayed on one page
-        for url, secs in self.log_parser.urls_times.iteritems():
-            print url, self.__five_num_summary(secs), secs
             
     def session_len_graph(self, transactions):
       import pylab

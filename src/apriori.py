@@ -78,7 +78,18 @@ def extract_itemsets(transactions, min_support):
         #prune candidates that have less than min_support
         itemsets, support_db = prune(transactions, candidate_set, min_support)    
     
-    return extract_closed_itemsets(rules, supports)
+    return filter_duplicates(rules, supports)
+
+def filter_duplicates(rules, supports):
+  filtered = []
+  for item in rules:
+    add = True
+    for g in filtered:
+      if set(item) == set(g):
+        add = False
+    if add: filtered.append(item)
+  
+  return filtered
 
 def extract_closed_itemsets(items, supports):
     def present(closed, item):

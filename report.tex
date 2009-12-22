@@ -20,6 +20,10 @@
 In  this paper, we will conduct a case study of mining frequent user access patterns from web log files.
 \end{abstract}
 
+
+
+
+
 \section{Introduction} 
 Understanding how users navigate and browse through web sites is important in many aspects, such as content recommendation,
 personalization and targeted advertising. Even more, it helps to understand users' needs and helps and provides real world input to better organization of content and structure.
@@ -30,6 +34,13 @@ The aim of this report is to illustrate pattern mining from web logs with exampl
 The primary objective was to discover the most frequent sequences by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining.
 
 Write here about sessions and data. And the overview of the process
+
+
+
+
+
+
+
 
 \section{Data preparation} 
 Every user visit to a web page is typically stored in a web server log file. When user navigates on a website, all stored clicks form users clickstream. We consider user session as single visit to website and each clickstream is associated to one session.
@@ -53,6 +64,14 @@ It must be mentioned, that log files contain all HTTP requests made to web serve
 
 Two important task must be performed before clickstream data from \emph{CLF} files can be used for analyzing: data cleaning and session identification.
 
+
+
+
+
+
+
+
+
 \subsection{Data cleaning}
 Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering requests from log files, following rules were applied:
 
@@ -65,9 +84,19 @@ Since log files contain all requests made to the server, we need to extract only
 \end{itemize}
 
 
-In addition to that, we modified requested URLS by  removing query string attributes(the part of url that starts with ?).  We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce number of URLs and generalize URLs while preserving meaningful information about the usage patterns..
+In addition to that, we modified requested URLs by  removing query string attributes(the part of url that starts with ?).  We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce number of URLs and generalize URLs while preserving meaningful information about the usage patterns..
 
 After performing previously stated procedure, log file now contains only intentional clicks made by users that are targeted to public web site pages. These requests can be combined into users's clickstream.
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Session identification}
 The next step was to group user requests made during one visit into sessions. A user session is defined as a sequence of temporally compact accesses by a user \cite{on_mining_logs}.
@@ -84,14 +113,36 @@ assume that if an user has not interacted with the server for more than $t$
 minutes, any new interaction from an user from the same IP address can be
 thought of as a new use case scenario.
 
+
+
+
+
+
+
+
+
+
 \subsection{Statistics about the logs} 
-We used a batch of two log files. One set of log files was from August and September, the other November-December. In total, log files contained 
+Log files used orginated form August to December 2009, with October data missing. In total, log files contained 
 $??$ requests, of which $??$ remained after data cleaning. These $??$ requests were done in $??$ sessions. Average session length was $??$. Requests involved $??$ distinct URLs. From figure ??, it can be seen that ...
 
 
 
 
-\section{Frequent item sets in log files} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Frequent item sets} 
 First and foremost interesting question about web session on can ask, are there some pages that users tend to visit together during one session?
 
 
@@ -111,13 +162,31 @@ repeating elements. order
 
 
 
-\section{Frequent sequential patterns with timed access}
 
-Frequent itemsets itself do not capture nature of web navigation - sequential rules. 
 
-Time decoration
 
-apriori 
+
+
+
+
+\section{Frequent sequential patterns}
+
+Frequent item give basic insight about which pages are visited together during one session. But it has limitations. It does not take into count order of pages in which pages were visited, which is very important information in web usage mining. Second biggest limitation, it does not give information wheter on page was visited multiple times. This helps to identify how users actually traverse on the website.
+
+To extract frequent sequential patterns
+
+
+
+
+
+
+
+\subsection{Time factor}
+Sequntial patterns can be used to see how much user spend time on each pages. Suppose we have some kind of frequent pattern, where user traverses following path: $page1 \rightarrow page2 \rightarrow page3$. For this pattern, we can search all transaction where it occurs and calculate times
+
+
+
+
 
 
 
@@ -137,6 +206,9 @@ apriori
 We discovered:
 
 Compared to sequential rules:
+
+
+
 
 
 
@@ -166,6 +238,9 @@ It can be concluded, that.
 
 
 \section{Patterns restriction by user intention}
+
+sven idea. reduce sparsity 
+
 When minign data with preprovided supprt information
 
 From previous study we saw that there are people who visit pages AAA, BB, CC. These can be considered the people looking for specific information. We concluded an experiment:
@@ -189,25 +264,18 @@ Mine frequent patterns from remaining session.
 
 \section{Summary}
 Methods provided will not scale in web2.0 environments.
+We have shown practical example how web analytics can be taken beyond google analytics and webalizer
 
-\section{Todo}
-Graphs needed
-number of sessions, pages, requests, session length distribution
-number of itemsets vs support
-top-1 page requests
 
-tables/figures
-frequent itemsets
-fruquent sequential patterns
-frequent forward references
-comparison of some data
 
-sven idea. reduce sparsity 
+
+
+
+
+
 
 
 \section*{References}
 \bibliographystyle{alpha}
 \bibliography{bibliography}
-
-
 \end{document}

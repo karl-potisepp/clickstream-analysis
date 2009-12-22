@@ -57,16 +57,9 @@ def analyse_clickstream(paths, support):
     for r in  lrs:
         print "\t",r
     
-    sys.exit(2)    
     
-    print "Large forward refernces, by count: "
-    
-    for item, support in  mfs:
-        if support > 50:
-            print "\t",support, item
-        
-    print "Apriori: "
-    data = apriori.extract_closed_itemsets(apriori.extract_itemsets(transactions, min_support))
+    print "Apriori and closed itemset: "
+    data = apriori.extract_itemsets(transactions, min_support)
     for itemset in data:
         print "\t", itemset
 

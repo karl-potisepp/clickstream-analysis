@@ -57,7 +57,6 @@ def large_reference_sequences(data, min_support):
     mfs = mf(data)
     itemsets = extract_itemsets(mfs, min_support)
     some_stats =  prioritize(mfs)
-    #return extract_maximal_itemsets(itemsets), mfs
     return itemsets, some_stats
 
 
@@ -157,19 +156,6 @@ def extract_itemsets(transactions, min_support):
         itemsets = prune(transactions, candidate_set, min_support)    
     
     return rules
-
-def extract_maximal_itemsets(items):
-    closed = []
-    while len(items) != 0:
-        item = items.pop()
-        closed.append(item)
-        
-        for remaining in items:
-            if is_substring(remaining, item):
-                items.remove(remaining)
-    
-    return closed
-
 
 
 def is_substring(candidate, maximal_forwards):

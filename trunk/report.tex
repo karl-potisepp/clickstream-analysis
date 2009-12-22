@@ -17,16 +17,17 @@
 \maketitle
 
 \begin{abstract}
-In this paper, we will conduct a case study of mining frequent user access patterns from web log files.
+In  this paper, we will conduct a case study of mining frequent user access patterns from web log files.
 \end{abstract}
 
 \section{Introduction} 
 Understanding how users navigate and browse through web sites is important in many aspects, such as content recommendation,
-personalization and targeted advertising. Even more, it helps to undserstand users' needs and helps and provides real world input to better organization of content and structure.
+personalization and targeted advertising. Even more, it helps to understand users' needs and helps and provides real world input to better organization of content and structure.
 
 The aim of this report is to illustrate pattern mining from web logs with example of web access logs from the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu\footnote{\url{http://math.ut.ee}}. Motivation for this study was to find meaningful use-cases from log files and identify possible bottlenecks in the presentation layer and provide some input for user interface redesign. 
 
-The primary objective was to discover the most frequent sequences by analysing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining.
+
+The primary objective was to discover the most frequent sequences by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining.
 
 Write here about sessions and data.
 
@@ -50,28 +51,28 @@ It must be mentioned, that log files contain all HTTP requests made to web serve
 \caption{Example of log file}
 \end{figure}
 
-Two important task must be performed before clickstream data from CLF files can be used for analysing: data cleaning and session identification.
+Two important task must be performed before clickstream data from \emph{CLF} files can be used for analyzing: data cleaning and session identification.
 
 \subsection{Data cleaning}
-Since log files contain all requests made to the server, we need to extract only relevant requests and elimante others. When filtering requests from log files, following rules were applied:
+Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering requests from log files, following rules were applied:
 
 \begin{itemize}
-  \item Only requests to public site are considered. Requests to personal homepages(pages starting with ~) are discarded. Also, all statical content files that were used by web paegs were removed, such as images files, Javascript and CSS documents. \\ The server also had had special error page url, that user was redirected to when he tried to acess non existent or oudated resource. We elimnated all errorpage access, as these are not intinally made by users. It must be noted that the original page, that redirected user to error page, remains in log file.
+\item Only requests to public site are considered. Requests to personal homepages (pages starting with ~) are discarded. Also, all statical content files that were used by web paegs were removed, such as images files, Javascript and CSS documents. \\ The server also had had special error page url, that user was redirected to when he tried to acess non existent or oudated resource. We elimnated all errorpage access, as these are not initially made by users. It must be noted that the original page, that redirected user to error page, remains in log file.
   
-  \item All other HTTP requests types besides POST and GET were ignored. We noticed that tere were regular OPTIONS request, that most probably were made by some automated monitoring tool. 
+\item All other HTTP requests types besides POST and GET were ignored. We noticed that there were regular OPTIONS request, that most probably were made by some automated monitoring tool. 
   
-  \item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP address was added to blacklist, if there was a request made form the IP-address to acess \emph{robots.txt} file. Namely, we believe that only indexer request robot.txt resource and therefor we can ignore all indexers.
+\item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP address was added to blacklist, if there was a request made form the IP-address to access \emph{robots.txt} file. Namely, we believe that only indexer request robot.txt resource and therefor we can ignore all indexers.
 \end{itemize}
 
 
-In addition to that, we modified requested URLS by  removing query string attributes(the part of url that starts with ?).  We assumed that typcally URLs idenitfy a distinct page and querystring some operation or action on it. This heleped us to reduce number of URLs and generalise urls while preserving meaningul information about the usage patterns..
+In addition to that, we modified requested URLS by  removing query string attributes(the part of url that starts with ?).  We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce number of URLs and generalize URLs while preserving meaningful information about the usage patterns..
 
-After perofrming previously stated procedure, log file now contains only intentional clicks made by users that are targeted to public web site pages. These requests can be combined into users's clickstream.
+After performing previously stated procedure, log file now contains only intentional clicks made by users that are targeted to public web site pages. These requests can be combined into users's clickstream.
 
 \subsection{Session identification}
 The next step was to group user requests made during one visit into sessions. A user session is defined as a sequence of temporally compact accesses by a user \cite{on_mining_logs}.
 
-Generally, this can be done by providing a cookie to each user with some generated unique idendification number and then logging each request and the cookie ID simultaneously, but since we could not modify the existing software stack, we had to use the data that was already given. CLF formatted log files do not have an explicit session ID stored. 
+Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously, but since we could not modify the existing software stack, we had to use the data that was already given. CLF formatted log files do not have an explicit session ID stored. 
 
 As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in
 same session, if the time between consecutive requests (clicks) is not more
@@ -98,7 +99,7 @@ repeating elements. order
 
 
 \section{Frequent sequential patterns with timed access}
-Frequent itemsets itself do not capture nature of web navigation - sequenatial rules. 
+Frequent itemsets itself do not capture nature of web navigation - sequential rules. 
 
 Time decoration
 

@@ -145,19 +145,21 @@ Graph: page counts?
 
 
 \section{Frequent item sets} 
-From the perspective of web site design and browsing sessions, the most important question is whether or not there are groups of pages users tend to visit together. If these do exist, a web designer can smooth users' browsing experience by providing easier access to the information users actually seek. This can be achieved by eliminating unnecessary 'gateway' pages (i.e. instead of pointing at a sign that points to the lavatory, point straight to where the lavatory is) and merging contents of the pages that are often viewed simultaneously. Common sense must of course be applied in this process in order to avoid tyranny of the majority - prominently placing the phone numbers of the Computer Science department and hiding all the other departments' can lead to negative results instead. However this report deals not with web design, but rather finding areas on a web site where it can be applied.
+From the perspective of web site design and browsing sessions, the most important question is whether or not there are groups of pages users tend to visit together. The presence of such kinds of groups can give a web designer valuable insight into how people use the web site. For example, content split on separate pages but still often viewed together can be merged to achieve a smoother browsing experience.
 
-We approached the task of identifying these groups of pages by thinking of every page as a unique \emph{item}, which then form sequences depicting the progress of users navigating through the web site. Our objective was to find if there are some sequences (or parts of sequences) that tend to show up often in users' movements. However looking at the number of browsing sessions found in the data, it quickly becomes clear that a way to decide whether or not a sequence is significant is needed. It is obvious that if a common sequence is found in only three or four out of a total amount of 2,000 sessions, no important knowledge is gained. Therefore a threshhold is needed to 
-eliminate the sequences that are not frequently found. To do this we use a tool often used in frequent item set mining \cite{frequent_item_set_mining} called \emph{support}.
+We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} tool called \emph{support}.
 
-Support is a number that shows how frequently a sequence appears in the data. There are two kinds of support: absolute and relative. Absolute support is the exact number of times the sequence is present, relative support is the percentage of all sessions that contain the sequence. Using this tool, it is trivial to filter out sequences that are not common in the data. The only problem is that there is no magic bullet solution to choosing the 'right' support threshhold.
+Support is a number that shows how frequently a subset appears in all item sets. There are two kinds of support: absolute and relative. Absolute support is the exact number of times the subset is present, relative support is the percentage of all sets that contain the subset. Using this tool, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshhold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
 
-First and foremost interesting question about web session on can ask, are there some pages that users tend to visit together during one session?
-
-Describe algorithm used. Used closed frequent itemsets
-What are problems with frequent item sets: no  repeating elements. order
-Support selection
 Graph: support vs itemset count
+
+However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used another tool: \emph{closed item sets}. An item set is closed if all its proper supersets have smaller support. By searching for only closed item sets, we eliminate uninteresting subsets of already present results and leave only those which provide useful information.
+
+We used the following algorithm to find frequent closed itemsets.
+
+In addition to the difficulties in choosing an ideal support threshhold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. \emph{Frequent sequential item sets} solve these problems at least partially.
+
+
 
 
 
@@ -165,7 +167,7 @@ Graph: support vs itemset count
 
 \section{Frequent sequential patterns}
 
-Frequent item give basic insight about which pages are visited together during one session. But it has limitations. It does not take into count order of pages in which pages were visited, which is very important information in web usage mining. Second biggest limitation, it does not give information wheter on page was visited multiple times. This helps to identify how users actually traverse on the website.
+Sequential item sets have an important advantage over simple item sets - they hold additional information about the sequence the pages in the set were accessed. We now searched for not only groups or pages, but specific sequences. Frequently appearing sequences can provide much insight into users' navigaton of the site.
 
 To extract frequent sequential patterns
 

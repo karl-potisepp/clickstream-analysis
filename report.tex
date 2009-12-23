@@ -149,11 +149,11 @@ From the perspective of web site design and browsing sessions, the most importan
 
 We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} tool called \emph{support}.
 
-Support is a number that shows how frequently a subset appears in all item sets. There are two kinds of support: absolute and relative. Absolute support is the exact number of times the subset is present, relative support is the percentage of all sets that contain the subset. Using this tool, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshhold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
+Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshhold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
 
 Graph: support vs itemset count
 
-However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used another tool: \emph{closed item sets}. An item set is closed if all its proper supersets have smaller support. By searching for only closed item sets, we eliminate uninteresting subsets of already present results and leave only those which provide useful information.
+However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used another concept: \emph{closed item sets}. An item set is closed if all its proper supersets have smaller support. By searching for only closed item sets, we eliminate uninteresting subsets of already present results and leave only those which provide useful information.
 
 We used the following algorithm to find frequent closed itemsets.
 
@@ -179,7 +179,7 @@ What can we see from this.
 
 
 \subsection{Time factor}
-Sequntial patterns can be used to see how much user spend time on each pages. Suppose we have some kind of frequent pattern, where user traverses following path: $page1 \rightarrow page2 \rightarrow page3$. For this pattern, we can search all transaction where it occurs and calculate times
+Sequential patterns can be used to see how much users spend time on each page. If we have some kind of frequent sequence  where user traverses the following path: $page1 \rightarrow page2 \rightarrow page3$. For this pattern, we can search all transaction where it occurs and calculate times
 
 
 

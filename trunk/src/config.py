@@ -4,7 +4,7 @@ session_timeout = 1800
 
 #if float, then relative is considered
 #if int, then absolute
-support = 0.2
+support = 0.05
 
 filename = [
     "math-access_log",
@@ -17,9 +17,17 @@ filename = [
     "math-access_log.7",
     "math-access_log.8",
     "math-access_log.9"]    
-    
+
+"""
+filename = [
+
+    "math-access_log",
+    "math-access_log.1"]    
+print "December"
+"""        
 filename.reverse()
-#filename = filename[:1]
+
+
 DATA = "../../data/all/"
 OUTPUT = "../../output/"
 paths = [DATA+f for f in filename]
@@ -27,9 +35,9 @@ paths = [DATA+f for f in filename]
 range_min = 1
 range_max = 100
 
-filter_fn = lambda x: len(x) > 1 and has_keywords(x)
+filter_fn = lambda x: len(x) > 1
 
-print "FILTER ACTIVE"
+
 def has_keywords(x):
   
   for line in x:

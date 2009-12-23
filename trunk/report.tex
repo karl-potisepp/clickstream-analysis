@@ -70,8 +70,6 @@ Two important tasks must be performed before clickstream data from \emph{CLF} fi
 
 
 
-
-
 \subsection{Data cleaning}
 Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering requests from log files, following rules were applied:
 
@@ -158,7 +156,7 @@ However even if we manage to choose an optimal value for the support threshhold,
 We used the following algorithm to find frequent closed itemsets.
 
 In addition to the difficulties in choosing an ideal support threshhold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. \emph{Frequent sequential item sets} solve these problems at least partially.
-
+
 
 
 
@@ -166,20 +164,20 @@ In addition to the difficulties in choosing an ideal support threshhold, there a
 
 
 \section{Frequent sequential patterns}
+Simply by listing all frequent item sets we won't see much how user actually use website. This is because of two reasons. First, frequent itemsets do not capture of the order of pages visited. Secondly, information about multiple page visits is lost constructing itemsets. 
 
-Sequential item sets have an important advantage over simple item sets - they hold additional information about the sequence the pages in the set were accessed. We now searched for not only groups or pages, but specific sequences. Frequently appearing sequences can provide much insight into users' navigaton of the site.
+The solution for this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases i.e. we are minging sequences of clicks that frequently are followed by each other. Frequent sequences can be used to see how user actually tend to navigate and reach some desired resource.
 
-To extract frequent sequential patterns
-
-Graph: support vs itemset count
-What can we see from this.
+To mine frequent patterns from our dataset, we used  an apriori-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
 
 
 
+\subsection{Pages access times}
+As for every click the timestamp is available when the click was execeuted, we can find how much time user actually spend on a web page by calculating time interval between two clicks. For every page, we can calculate average time user spend on this page. But this is more effective, if we apply this method to previously found sequntial rules. Namely, for every frequent sequence found, we look find all session that contain this sequence and calculate median time for every page in the sequnce that users spend on that page.  We choose median time as we consider thise more appropriate by experimental evalutaion.
+
+This methods allows us to determine the pages that are visited only because of navigation and not for content. For usability reasons, such pages should be removed to reduce user clicks.
 
 
-\subsection{Time factor}
-Sequential patterns can be used to see how much users spend time on each page. If we have some kind of frequent sequence  where user traverses the following path: $page1 \rightarrow page2 \rightarrow page3$. For this pattern, we can search all transaction where it occurs and calculate times
 
 
 
@@ -234,20 +232,7 @@ It can be concluded, that.
 
 
 
-\section{Patterns restriction by user intention}
-
-sven idea. reduce sparsity 
-
-When minign data with preprovided supprt information
-
-From previous study we saw that there are people who visit pages AAA, BB, CC. These can be considered the people looking for specific information. We concluded an experiment:
-Eliminated all sessions that do no contain pages AAA, BB, CCC.
-Mine frequent patterns from remaining session.
-
-
-
-
-
+\section{Restricting patterns by user specified pages}
 
 
 
@@ -262,6 +247,7 @@ Mine frequent patterns from remaining session.
 \section{Summary}
 Methods provided will not scale in web2.0 environments.
 We have shown practical example how web analytics can be taken beyond google analytics and webalizer
+More work could be done by reasearching into oulier detection and signifacne detection
 
 
 

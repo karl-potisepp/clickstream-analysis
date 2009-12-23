@@ -126,7 +126,7 @@ thought of as a new use case scenario.
 
 \subsection{Statistics about the logs} 
 The log files contained info about requests made to the server from August to December 2009, with October data missing. In total, log files contained 
-$544237$ requests, of which $122822$ remained after data cleaning. These requests were grouped to $35952$ sessions. Average session length was $??$. Distribution of user session length can be see on figure \ref{session_len}. Requests involved $2059$ distinct URLs. 
+$544237$ requests, of which $122822$ remained after data cleaning. These requests were grouped to $35952$ sessions. Average session length was $3.4$ clicks. Distribution of user session length can be see on figure \ref{session_len}. Requests involved $2059$ distinct URLs. 
 
 \begin{figure}[H]
   \centering
@@ -156,12 +156,12 @@ From the perspective of web site design and browsing sessions, the most importan
 
 We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} tool called \emph{support}.
 
-Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshhold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
-
+Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
+\marginpar{\textbf{Riivo:} no see closed itemset asi on vist vigane, sellist  seal keskel vist ikka ei tohisk olla?}
 \begin{figure}[H]
   \centering
       \includegraphics[width=0.9\textwidth]{apriori_closed_itemset_count}
-  \caption{How rule support changes number of frequent itemsets}
+  \caption{How rule support changes number of frequent closed itemsets}
 \end{figure}
 
 
@@ -169,7 +169,7 @@ However even if we manage to choose an optimal value for the support threshhold,
 
 We used the following algorithm to find frequent closed itemsets.
 
-In addition to the difficulties in choosing an ideal support threshhold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. \emph{Frequent sequential item sets} solve these problems at least partially.
+In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. \emph{Frequent sequential item sets} solve these problems at least partially.
 
 
 
@@ -208,7 +208,7 @@ When applied this algorithm to our dataset, we found almost same rules as with t
 \section{Changes in patterns through time} 
 Pattern mining can bring insight into how patterns changes in time. When mining school website data, one can hypothesize how users' interest changes in time. We can presume, that August is the pre-semester period and students might be looking for information about new professors, timetables, good seminars provided upcoming semester. When the semester starts in September, it can be assumed that these kinds of aims become outdated and new behavioral patterns arise.
 
-We split up the data set into two datasets: August and  Sepetember and compared sequential rules found for both datasets with same relative support, s=$0.04\%$
+We split up the data set into two datasets: August and September and compared sequential rules found for both datasets with same relative support, s=$0.04\%$
 
 
 
@@ -225,9 +225,9 @@ In our dataset, number of different pages visited is relatively big compared to 
 We conducted the experiment and selected session that contain page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but it helped us reveal still more patterns about the page. For example, a   frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users to refresh on the front page before arriving on page \emph{inimesed/Instituudid}.
 
 \section{Summary}
-We have shown practical example how web analytics can be taken beyond google analytics and webalizer
-More work could be done by reasearching into oulier detection and signifacne detection
-
+We have shown practical example how web analytics can be taken beyond Google analytics.
+More work could be done by researching  outliers detection and and pattern significance measures.
+Sequential patterns decorated with times helped us identify a hop-page without even clicking on web site.
 
 
 

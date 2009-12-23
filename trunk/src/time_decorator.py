@@ -21,6 +21,8 @@ def deocarate_timings(patterns, log):
         timings.setdefault(i, Timing(pattern)).sum(pos, trans)
       i+=1
   
+  for k, v in timings.items():
+    v.output()
   return timings
   
 

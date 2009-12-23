@@ -145,6 +145,13 @@ Graph: page counts?
 
 
 \section{Frequent item sets} 
+From the perspective of web site design and browsing sessions, the most important question is whether or not there are groups of pages users tend to visit together. If these do exist, a web designer can smooth users' browsing experience by providing easier access to the information users actually seek. This can be achieved by eliminating unnecessary 'gateway' pages (i.e. instead of pointing at a sign that points to the lavatory, point straight to where the lavatory is) and merging contents of the pages that are often viewed simultaneously. Common sense must of course be applied in this process in order to avoid tyranny of the majority - prominently placing the phone numbers of the Computer Science department and hiding all the other departments' can lead to negative results instead. However this report deals not with web design, but rather finding areas on a web site where it can be applied.
+
+We approached the task of identifying these groups of pages by thinking of every page as a unique \emph{item}, which then form sequences depicting the progress of users navigating through the web site. Our objective was to find if there are some sequences (or parts of sequences) that tend to show up often in users' movements. However looking at the number of browsing sessions found in the data, it quickly becomes clear that a way to decide whether or not a sequence is significant is needed. It is obvious that if a common sequence is found in only three or four out of a total amount of 2,000 sessions, no important knowledge is gained. Therefore a threshhold is needed to 
+eliminate the sequences that are not frequently found. To do this we use a tool often used in frequent item set mining \cite{frequent_item_set_mining} called \emph{support}.
+
+Support is a number that shows how frequently a sequence appears in the data. There are two kinds of support: absolute and relative. Absolute support is the exact number of times the sequence is present, relative support is the percentage of all sessions that contain the sequence. Using this tool, it is trivial to filter out sequences that are not common in the data. The only problem is that there is no magic bullet solution to choosing the 'right' support threshhold.
+
 First and foremost interesting question about web session on can ask, are there some pages that users tend to visit together during one session?
 
 Describe algorithm used. Used closed frequent itemsets

@@ -4,7 +4,7 @@ session_timeout = 1800
 
 #if float, then relative is considered
 #if int, then absolute
-support = 0.05
+support = 0.2
 
 filename = [
     "math-access_log",
@@ -27,5 +27,13 @@ paths = [DATA+f for f in filename]
 range_min = 1
 range_max = 100
 
-filter_fn = lambda x: len(x) > 1
+filter_fn = lambda x: len(x) > 1 and has_keywords(x)
+
+print "FILTER ACTIVE"
+def has_keywords(x):
+  
+  for line in x:
+    if line == "inimesed_Instituudid":
+      return True
+  return False
 

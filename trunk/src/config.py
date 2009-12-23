@@ -4,7 +4,7 @@ session_timeout = 1800
 
 #if float, then relative is considered
 #if int, then absolute
-support = 0.02
+support = 0.05
 
 filename = [
     "math-access_log",

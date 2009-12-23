@@ -22,7 +22,8 @@ def analyse_clickstream(paths, support):
     
     # sessions from the parser    
     transactions = [session for session in parser.get_simple_sessions() if config.filter_fn(session)]
-    
+    #stats.session_len_graph(parser.get_simple_sessions())
+    stats.page_freq_graph(parser.get_simple_sessions())
     print "db size after reduction:", len(transactions)
     
     # if support is given as a float, it is presumed to be relative support

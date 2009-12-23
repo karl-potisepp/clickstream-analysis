@@ -1,10 +1,10 @@
-# -*- coding: utf_8 -*-
 import sys, getopt, os
 
 import apachelogs, logparser
-import apriori, statistics, tree, fsm_wrapper
+import fsm_wrapper
 import time_decorator
 import config
+import apriori
 
 
 def analyse_clickstream(paths, support):
@@ -16,56 +16,38 @@ def analyse_clickstream(paths, support):
     parser = logparser.LogParser(log, [])
     parser.parse()
     
-    # output simple statistics about data set
-    stats = statistics.LogFileStatistics(parser)
-    stats.output_some_statistics()
     
-    # sessions from the parser    
     transactions = [session for session in parser.get_simple_sessions() if config.filter_fn(session)]
-    #stats.session_len_graph(parser.get_simple_sessions())
-    #stats.page_freq_graph(parser.get_simple_sessions())
-    print "db size after reduction:", len(transactions)
-    
-    # if support is given as a float, it is presumed to be relative support
-    # i.e. the minimum percentage of transactions to have a certain itemset
-    # the percentage is then converted into absolute support
-    if type(support) is float:
+    n = len(transactions)
+
+    support = 0.9
+    x = []
+    y = []
+    while support >= 0.001:
+      
         min_support = int(len(transactions) * support)
-    else:
-        min_support = support
+        #results = fsm_wrapper.fpm(transactions, min_support)
+        results = apriori.extract_itemsets(transactions, min_support)
+        print support,";",len(results)
+        
+        x.append(len(results))
+        y.append(support)
+        support = support - 0.01
     
-    print "Support", support
+    import pylab
+    pylab.figure(figsize=(8, 4))
+    pylab.plot(y, x)
 
-
-    # output all sessions into a file
-    # row format : "page1" "page2" "page3" ... "pageN"
-    sessions_file = open(config.OUTPUT+"sessions.txt", 'w')
-    for session in transactions:
-        line = ",".join(session) + '\n'
-        sessions_file.write(line)
-
-
-
-    results = fsm_wrapper.fpm(transactions, min_support)
-    times = time_decorator.deocarate_timings(results, parser)
-    print "Sequential patterns: "
-    for r in  results:
-        print "\t",r
+    ax = pylab.axes()
+    ax.set_xlim(min(y), max(y))
+    #ax.xaxis.set_major_formatter(majorFormatter)
+    #ax.xaxis.set_major_locator(maxlocator)
+    ax.set_xlabel('Relative support')
+    ax.set_ylabel('Number of frequent patterns')
+    ax.grid(True)
+    pylab.savefig(config.OUTPUT+"apriori_itemset_count.pdf")
     
-  
-    lrs, mfs = tree.large_reference_sequences(transactions, min_support)
-    times = time_decorator.deocarate_timings(lrs, parser)
-    print "Large reference sequences: "
-    for r in  lrs:
-        print "\t",r
-    
-    
-    print "Apriori and closed itemset: "
-    data = apriori.extract_itemsets(transactions, min_support)
-    for itemset in data:
-        print "\t", itemset
-
-
+            
 
 
 def read_opts(argv):

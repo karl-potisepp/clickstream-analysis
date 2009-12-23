@@ -21,6 +21,10 @@ def analyse_clickstream(paths, support):
     stats.output_some_statistics()
     
     # sessions from the parser    
+    
+    lens = [len(x) for x in parser.get_simple_sessions()]
+    import numpy
+    print numpy.average(lens)
     transactions = [session for session in parser.get_simple_sessions() if config.filter_fn(session)]
     #stats.session_len_graph(parser.get_simple_sessions())
     #stats.page_freq_graph(parser.get_simple_sessions())
@@ -52,14 +56,14 @@ def analyse_clickstream(paths, support):
     for r in  results:
         print "\t",r
     
-  
+    """
     lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     times = time_decorator.deocarate_timings(lrs, parser)
     print "Large reference sequences: "
     for r in  lrs:
         print "\t",r
     
-    
+    """
     print "Apriori and closed itemset: "
     data = apriori.extract_itemsets(transactions, min_support)
     for itemset in data:

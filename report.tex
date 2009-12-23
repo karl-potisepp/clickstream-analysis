@@ -9,7 +9,11 @@
 \usepackage{url}
 \usepackage{verbatim} 
 
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{{./figures/}}
 \begin{document}
+
 
 \title{Click-stream Data Analysis of Web Traffic}
 \author{Riivo Kikas, Karl Potisepp}
@@ -122,10 +126,15 @@ thought of as a new use case scenario.
 
 \subsection{Statistics about the logs} 
 The log files contained info about requests made to the server from August to December 2009, with October data missing. In total, log files contained 
-$544237$ requests, of which $122822$ remained after data cleaning. These requests were grouped to $35952$ sessions. Average session length was $??$. Requests involved $2059$ distinct URLs. From figure ??, it can be seen that ...
+$544237$ requests, of which $122822$ remained after data cleaning. These requests were grouped to $35952$ sessions. Average session length was $??$. Distribution of user session length can be see on figure \ref{session_len}. Requests involved $2059$ distinct URLs. 
 
-Graph:Session length distribution
-Graph: page counts?
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=0.9\textwidth]{session_len}
+  \caption{Session length histogram}
+  \label{session_len}
+\end{figure}
+
 
 
 
@@ -149,7 +158,12 @@ We approached the task of identifying such groups by thinking of every page as a
 
 Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshhold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
 
-Graph: support vs itemset count
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=0.9\textwidth]{apriori_closed_itemset_count}
+  \caption{How rule support changes number of frequent itemsets}
+\end{figure}
+
 
 However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used another concept: \emph{closed item sets}. An item set is closed if all its proper supersets have smaller support. By searching for only closed item sets, we eliminate uninteresting subsets of already present results and leave only those which provide useful information.
 
@@ -164,16 +178,21 @@ In addition to the difficulties in choosing an ideal support threshhold, there a
 
 
 \section{Frequent sequential patterns}
-Simply by listing all frequent item sets we won't see much how user actually use website. This is because of two reasons. First, frequent itemsets do not capture of the order of pages visited. Secondly, information about multiple page visits is lost constructing itemsets. 
+Simply by listing all frequent item sets we won't see much how user actually use website. This is because of two reasons. First, frequent item sets do not capture of the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets. 
 
-The solution for this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases i.e. we are minging sequences of clicks that frequently are followed by each other. Frequent sequences can be used to see how user actually tend to navigate and reach some desired resource.
+The solution for this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases i.e. we are mining sequences of clicks that frequently are followed by each other. Frequent sequences can be used to see how user actually tend to navigate and reach some desired resource.
 
-To mine frequent patterns from our dataset, we used  an apriori-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
+To mine frequent patterns from our dataset, we used  an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
+
+\begin{figure}[H]
+  \centering
+      \includegraphics[width=0.9\textwidth]{sequential_itemset_count}
+  \caption{Number of frequent sequential patterns depending on relative support}
+\end{figure}
 
 
-
-\subsection{Pages access times}
-As for every click the timestamp is available when the click was execeuted, we can find how much time user actually spend on a web page by calculating time interval between two clicks. For every page, we can calculate average time user spend on this page. But this is more effective, if we apply this method to previously found sequntial rules. Namely, for every frequent sequence found, we look find all session that contain this sequence and calculate median time for every page in the sequnce that users spend on that page.  We choose median time as we consider thise more appropriate by experimental evalutaion.
+\subsection{Page access times}
+As for every click the timestamp is available when the click was executed, we can find how much time user actually spend on a web page by calculating time interval between two clicks. For every page, we can calculate average time user spend on this page. But this is more effective, if we apply this method to previously found sequential rules. Namely, for every frequent sequence found, we look find all session that contain this sequence and calculate median time for every page in the sequence that users spend on that page.  We choose median time as we consider this more appropriate by experimental evaluation.
 
 This methods allows us to determine the pages that are visited only because of navigation and not for content. For usability reasons, such pages should be removed to reduce user clicks.
 
@@ -181,49 +200,16 @@ This methods allows us to determine the pages that are visited only because of n
 
 
 
+\section{Maximal reference sequences}
+Path traversal pattern mining has been studied extensively to find better alternatives to regular frequent sequence mining in web mining context. A solution has been provided \cite{path_patterns} that provides regular sequential patterns, but reduces the patterns only to \emph{forward reference sequences}, that is patterns that only contain forward navigations. Authors of \cite{path_patterns} say that forward reference illustrate what people are looking for e.g. destination pages and eliminate back references from sessions.
 
+When applied this algorithm to our dataset, we found almost same rules as with the regular sequential pattern mining technique. The differences was only number of patterns found, namely by eliminating back references and repeating pages, we find less patterns. When  number of patterns is bigger, this methods helps to bring better overview of frequent user traversal path and target pages than previously used.
 
+\section{Changes in patterns through time} 
+Pattern mining can bring insight into how patterns changes in time. When mining school website data, one can hypothesize how users' interest changes in time. We can presume, that August is the pre-semester period and students might be looking for information about new professors, timetables, good seminars provided upcoming semester. When the semester starts in September, it can be assumed that these kinds of aims become outdated and new behavioral patterns arise.
 
+We split up the data set into two datasets: August and  Sepetember and compared sequential rules found for both datasets with same relative support, s=$0.04\%$
 
-
-
-
-
-
-
-\section{Maximal forward references}
-
-During user navigation, user tend to to back links e.g. go back to page that they have visited before. In some cases these back links can be considered only as navigational feature, not because of user was interested the content.  When we eliminate the back references from web session, we can construct such clickstream that show users target page e.g. user interest.
-
-backward refernces
-apriori
-
-We discovered:
-
-Compared to sequential rules:
-
-
-
-
-
-
-
-
-\section{Evolving patterns through time} 
-One interesting aspects of log mining is using temporal data. We carried out experiments, to see how patterns change thorough time. When mining school website data, we can consider some periods of interets. August is the pre semester period and students might be looking for information about new professors, timetables, good semester provided upcoming semester. Now when semester starts, it can be assumed that these kinds of aims become outdate and new bevahioural patterns. And again, in decemeber, it is the period of exams and in our case also the period when students must choose their final year project topic and supervisor. To test these hypothesis, we concluded following test. 
-
-We split up the data set into three.
-
-* August
-* Sepetember
-* December
-
-For each period, we extraced sequential frequnt itemsets:
-
-
-
-
-It can be concluded, that.
 
 
 
@@ -234,18 +220,11 @@ It can be concluded, that.
 
 \section{Restricting patterns by user specified pages}
 
+In our dataset, number of different pages visited is relatively big compared to total number of sessions and average session length and as it can be seen support based rule mining might not find all interesting rules, without lowering support to very low. One idea how to overcome this problem and find easily more appropriate and significant frequent itemsets is following: Identify pages that you are interested in and find all sessions that contain these pages. Now run frequent pattern mining algorithms on the filtered session collection. The output should contain more relevant patterns with higher support and provides a simple way to analyze use cases separately and more thorough.
 
-
-
-
-
-
-
-
-
+We conducted the experiment and selected session that contain page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but it helped us reveal still more patterns about the page. For example, a   frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users to refresh on the front page before arriving on page \emph{inimesed/Instituudid}.
 
 \section{Summary}
-Methods provided will not scale in web2.0 environments.
 We have shown practical example how web analytics can be taken beyond google analytics and webalizer
 More work could be done by reasearching into oulier detection and signifacne detection
 
@@ -258,7 +237,6 @@ More work could be done by reasearching into oulier detection and signifacne det
 
 
 
-\section*{References}
 \bibliographystyle{alpha}
 \bibliography{bibliography}
 \end{document}

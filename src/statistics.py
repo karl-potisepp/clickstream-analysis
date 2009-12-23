@@ -1,32 +1,62 @@
 #some simple descriptive statistics
-import numpy as np
-
+import numpy
+import config
 class LogFileStatistics:
     
     def __init__(self, log_parser):
         self.log_parser = log_parser
-        
-    #crude function for five number summary
-    def __five_num_summary(self, nr_list):
-        nr_list.sort()
-        l = len(nr_list)
-        return (nr_list[0], 
-            nr_list[ (l-int(3*(l/4)))-1 ], 
-            nr_list[ (l-int(2*(l/4)))-1 ], 
-            nr_list[ (l-int(l/4))-1 ],
-            nr_list[ l-1 ])
-    
-    def mean_time_on_url(self, url):
-        return np.around(np.median(self.log_parser.urls_times[url]), 1)
-    
+
     def output_some_statistics(self):
         print "Sessions: ", self.log_parser.get_session_count()
         print "Matching lines: ", self.log_parser.get_line_count()
         print "Number of different urls: ", len(self.log_parser.urls)
     
-            
+
     def session_len_graph(self, transactions):
       import pylab
       lens = sorted([len(session) for session in transactions])
-      pylab.hist(lens,bins=(range_max-range_min), range=(range_min,range_max))
-      pylab.show()
+      min = numpy.min(numpy.array(lens))
+      max = 100
+      ax = pylab.axes()
+      pylab.hist(lens,bins=(max-min), range=(min,max))
+      ax.set_xlabel("Session length")
+      ax.set_ylabel("Number of sessions")
+      pylab.savefig(config.OUTPUT+"session_len.pdf")
+
+    def page_freq_graph(self, transactions):
+        freq_item_list = {}
+        for trans in transactions:
+            for item in trans:
+                if item in freq_item_list:
+                    freq_item_list[item]+=1
+                else:
+                    freq_item_list[item]=1      
+        
+        from operator import itemgetter
+        pages = []
+        counts = []
+        pos = []
+        i = 1.0
+        for p, c in sorted(freq_item_list.items(), key=itemgetter(1)):
+          pages.append(p)
+          counts.append(c)
+          pos.append(i)
+          i = i + 2.0
+
+        import pylab
+        pylab.cla()
+        pylab.clf()
+        pylab.figure(1)
+        pylab.barh(numpy.array(pos), numpy.array(counts), align='center')
+
+        #pylab.yticks(numpy.array(pos), tuple(pages))
+        pylab.xlabel("Page count")
+        #pylab.grid(True)
+        pylab.savefig(config.OUTPUT+"page_distribution.pdf")
+        
+        
+        
+        
+
+
+        

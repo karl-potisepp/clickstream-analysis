@@ -1,9 +1,6 @@
 # Apriori algorithm for Frequent Itemset Mining
 # found from public domain
 
-import operator
-
-
 def freq_item_count(transactions, min_support):
     """function for finding all frequent 1-items from transactions"""
     freq_item_list = {}

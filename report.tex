@@ -43,11 +43,11 @@ Write here about sessions and data. And the overview of the process
 
 
 \section{Data preparation} 
-Every user visit to a web page is typically stored in a web server log file. When user navigates on a website, all stored clicks form users clickstream. We consider user session as single visit to website and each clickstream is associated to one session.
+For each time an user visits a web page, a piece of information is typically stored in a web server's log file. When user navigates around a website, all such pieces of information (alternatively called requests or clicks) form a session (click-stream). We consider a session as an user's single visit to the website and associate each click with to one session.
 
 Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of :(i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Prototcol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted\ref{log_sample}.
 
-It must be mentioned, that log files contain all HTTP requests made to web server, including requests for downloading images and style sheet documents attached to web pages serverd by the server.
+It must be mentioned, that log files contain all HTTP requests made to the web server, including requests for downloading images and style sheet documents attached to the web pages served.
 
 \begin{figure}[h]
 {\tiny
@@ -62,7 +62,7 @@ It must be mentioned, that log files contain all HTTP requests made to web serve
 \caption{Example of log file}
 \end{figure}
 
-Two important task must be performed before clickstream data from \emph{CLF} files can be used for analyzing: data cleaning and session identification.
+Two important tasks must be performed before clickstream data from \emph{CLF} files can be used for analyzing: data cleaning and session identification.
 
 
 
@@ -76,17 +76,17 @@ Two important task must be performed before clickstream data from \emph{CLF} fil
 Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering requests from log files, following rules were applied:
 
 \begin{itemize}
-\item Only requests to public site are considered. Requests to personal homepages (pages starting with ~) are discarded. Also, all statical content files that were used by web paegs were removed, such as images files, Javascript and CSS documents. \\ The server also had had special error page url, that user was redirected to when he tried to acess non existent or oudated resource. We elimnated all errorpage access, as these are not initially made by users. It must be noted that the original page, that redirected user to error page, remains in log file.
+\item Only requests to the public site are considered. Requests to personal homepages (pages starting with ~) are discarded. Also, all static content files that were used by web pages were removed, such as image files, JavaScript and CSS documents. \\ The server also had had special error page url, that the user was redirected to when they tried to access a non-existant resource. We eliminated this kind of access requests, as these are not initially made by users. It must be noted that the request for the original page that caused the server to redirect the user remains in the log file.
   
-\item All other HTTP requests types besides POST and GET were ignored. We noticed that there were regular OPTIONS request, that most probably were made by some automated monitoring tool. 
+\item All other HTTP request types besides POST and GET were ignored. We noticed that there were regular OPTIONS request, that most probably were made by some automated monitoring tool. 
   
-\item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP address was added to blacklist, if there was a request made form the IP-address to access \emph{robots.txt} file. Namely, we believe that only indexer request robot.txt resource and therefor we can ignore all indexers.
+\item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP address was added to blacklist, if there was a request made from the IP address to access \emph{robots.txt} file. Namely, we believe that only automated indexers request robot.txt and therefore we can ignore all subsequent requests from those IP-s, since we are only interested in how a human user perceives the web site. 
 \end{itemize}
 
 
-In addition to that, we modified requested URLs by  removing query string attributes(the part of url that starts with ?).  We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce number of URLs and generalize URLs while preserving meaningful information about the usage patterns..
+In addition to that, we modified requested URLs by removing query string attributes(the part of the URL that starts with ?). We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce number of different URLs while preserving meaningful information about the usage patterns.
 
-After performing previously stated procedure, log file now contains only intentional clicks made by users that are targeted to public web site pages. These requests can be combined into users's clickstream.
+After performing all the procedures described above, the log files now contain only information about the HTTP requests originating from intentional clicks made by the users on pages. These requests can be grouped into users' click-streams.
 
 
 
@@ -101,7 +101,7 @@ After performing previously stated procedure, log file now contains only intenti
 \subsection{Session identification}
 The next step was to group user requests made during one visit into sessions. A user session is defined as a sequence of temporally compact accesses by a user \cite{on_mining_logs}.
 
-Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously, but since we could not modify the existing software stack, we had to use the data that was already given. CLF formatted log files do not have an explicit session ID stored. 
+Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since log files in CLF do not store an explicit session ID, and since we could not modify the existing software stack, we had to use the data that was already given.  
 
 As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in
 same session, if the time between consecutive requests (clicks) is not more
@@ -123,7 +123,7 @@ thought of as a new use case scenario.
 
 
 \subsection{Statistics about the logs} 
-Log files used orginated form August to December 2009, with October data missing. In total, log files contained 
+The log files contained info about requests made to the server from August to December 2009, with October data missing. In total, log files contained 
 $??$ requests, of which $??$ remained after data cleaning. These $??$ requests were done in $??$ sessions. Average session length was $??$. Requests involved $??$ distinct URLs. From figure ??, it can be seen that ...
 
 

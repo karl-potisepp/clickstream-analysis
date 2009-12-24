@@ -146,7 +146,7 @@ However even if we manage to choose an optimal value for the support threshold, 
 
 In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
 
-
+From \ref{frequent_patterns} , it can be seen that homepage(\emph{avaleht}) is on of the most frequently accessed resource, which is obvious. The advantage of frequent pattern mining can be explained with the itemset where pages \emph{avaleht, 15208, inimesedInstituudid} are present together: it shows that navigation is mostly done starting from homepage and also that official peoples listing page (\emph{inimesedInstituudid}) is used as a hop to go to computer science faculty members listing page(\emph{1508}).  The order of pages travelled is not obvious, but we now here that the navigation other way around is not possible, as the links do only exist one-way. This problem can be used by mining frequent sequential patterns.
 
 \begin{figure}[H]
   \centering
@@ -171,20 +171,30 @@ Support & frequent itemset \\ \hline
   \label{frequent_patterns}
 \end{figure}
 
-
-
 \section{Frequent sequential patterns}
 Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets.
 
 This problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases, which means that we are searching for sequences of clicks that more often than not are followed by each other. Frequent sequences can be used to see how users actually tend to navigate and reach some desired resource.
-
-To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
 
 \begin{figure}[H]
   \centering
       \includegraphics[width=0.9\textwidth]{sequential_itemset_count}
   \caption{Number of frequent sequential patterns depending on relative support}
 \end{figure}
+
+
+To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
+
+
+Compared to simple frequent frequent itemsets, sequential patterns yield to more existing results (\ref{frequent_patterns}). First thing to notice is the continuous main-page refreshing with quite big time intervals. Our guess is that it caused by the people in faculty who have set faculty website as their home page in browser and when they open up new browser window, home page is opened. There is no better explanation for this phenomenon as the main page is currently pretty static had seldom updated.
+
+Most important result from usability point of view  are the patterns where users visit page \emph{inimesedInstituudid}. Users spend relatively little time on this page, for example in sequence
+\[ 
+\overset{6.0}{avaleht} \rightarrow \overset{3.0}{inimesedInstituudid} \rightarrow \overset{30.0}{15208} 
+\]
+it is only  3 seconds for as all users' median time, but the page user landed after visited takes 30seconds. The reasons for is that page  \emph{inimesedInstituudid}  is only a navigational page - it holds links to other pages. This page can be eliminated, for example including the links on the main page somehow, possibly with a drop-down menu or adding directly.
+
+
 
 \begin{figure}[H]
   \centering
@@ -222,6 +232,7 @@ Support & frequent sequential pattern \\ \hline
 \end{figure}
 
 
+
 \subsection{Page access times}
 Because the log files contain time and date info for every request made by the user, we know the time of each mouse click the user made (to a precision of 1-2 seconds, taking into account the time it takes for a request to reach the server). Knowing this we can find how much time users actually spend on a web page by calculating the time interval between two clicks. For every page, we can calculate the average time users spend on this page. However a more effective approach is to apply this method to previously found sequential patterns. Namely, for every frequent sequence found, we find all sessions that contain this sequence and calculate median time spent viewing each page in that sequence. We chose median time as we consider this more appropriate for experimental evaluation.
 
@@ -239,19 +250,75 @@ When we applied this algorithm to our dataset, we found almost the same frequent
 \section{Changes in patterns through time} 
 Pattern mining can also give insight into how patterns change over time. When mining school website data, one can hypothesize how users' interest changes in time. We can presume, that since August is the pre-semester period and students might be looking for information about new professors, timetables or good seminars provided on the upcoming semester. Once the semester starts in September, it can be assumed that these kinds of aims become outdated and new behavioral patterns arise.
 
-We split up the data set into two: August and September and compared sequential rules found for both datasets with same relative support, s=$0.04\%$.
+We split up the data set into two: August and September and compared sequential patterns found for both datasets with same relative support, s=$0.06\%$.
+
+Results reveal that in September\ref{sep2}, a frequently accessed page was \emph{/116245}, a news item announcing semester's official introduction event and first dates for lectures. This page was not present in august data as it was published on last day of August\ref{aug2}. Contrary to this, the page listing general news(\emph{yldteated}) had support of $0.07$ in August, but in September it was below $0.06$. 
+
+In September faculty and people listing pages(\emph{inimesedtudengid}, \emph{inimesedInstituudid}  had 3\% higher support than in August. Timetables listing page(\emph{oppetootunniplaanid})  was more frequently accessed in August than in September.
+
+Results confirm somehow our assumptions and we conclude this method can be used to compare user interests for different periods.
+
+
+\begin{figure}[H]
+  \centering
+\begin{tabular}{ r | l }
+Support & frequent itemset \\ \hline
+0.65 & avaleht \\ \hline
+0.15 & 15213 \\ \hline
+0.12 & inimesedtudengid \\ \hline
+0.12 & avaleht, 15213 \\ \hline
+0.11 & avaleht, inimesedtudengid \\ \hline
+0.11 & 15213, inimesedtudengid \\ \hline
+0.11 & oppetootunniplaanid \\ \hline
+0.11 & avaleht, 15213, inimesedtudengid \\ \hline
+0.1 & 15205 \\ \hline
+0.07 & oppetoooppekavad \\ \hline
+0.07 & inimesedInstituudid \\ \hline
+0.07 & yldteated \\ \hline
+\end{tabular}
+  \caption{Frequent itemsets for August }
+  \label{aug2}
+\end{figure}
+
+
+
+\begin{figure}[H]
+  \centering
+\begin{tabular}{ r | l }
+Support & frequent itemset \\ \hline
+0.67 & avaleht \\ \hline
+0.14 & 15213 \\ \hline
+0.12 & inimesedtudengid \\ \hline
+0.12 & avaleht, inimesedtudengid \\ \hline
+0.12 & avaleht, 15213 \\ \hline
+0.11 & 15213, inimesedtudengid \\ \hline
+0.11 & avaleht, 15213, inimesedtudengid \\ \hline
+0.1 & inimesedInstituudid \\ \hline
+0.09 & 15205 \\ \hline
+0.09 & 15208 \\ \hline
+0.09 & avaleht, inimesedInstituudid \\ \hline
+0.08 & avaleht, 15208 \\ \hline
+0.08 & oppetootunniplaanid \\ \hline
+0.08 & 15208, inimesedInstituudid \\ \hline
+0.08 & avaleht, 15208, inimesedInstituudid \\ \hline
+0.07 & oppetoooppekavad \\ \hline
+\end{tabular}
+  \caption{Frequent itemsets for september }
+  \label{sep2}
+\end{figure}
 
 
 \section{Restricting patterns by user specified pages}
-
 In our data set, the number of different pages visited is relatively big compared to the total number of sessions and average session length, and many interesting frequent patterns may not be visible without lowering the support threshold too much. One idea how to overcome this problem and easily find more appropriate and significant frequent patterns is the following: First, identify pages that you are interested in and find all sessions that contain these pages. Then run frequent pattern mining algorithms on the filtered session collection. The output should contain more relevant patterns with higher support. This method provides a simple way to analyze use cases more separately and thoroughly.
 
 We conducted the experiment and focused only on sessions that contained the page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but helped us find more patterns about the page than we had found before. For example, a frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users tend to reload the front page before arriving on \emph{inimesed/Instituudid}.
 
 \section{Summary}
-We have shown a practical example of how web analytics can be taken beyond Google analytics.
-More work could be done by researching outliers detection and and pattern significance measures.
-Sequential patterns decorated with times helped us identify a hop-page without even clicking on web site.
+We have shown a practical example of how traditional frequent pattern mining algorithms can be useful in web analytics context and understanding users' need. Sequential patterns decorated with times spent on pages helped us identify a hop-pages without even taking a look at the website.
+
+More work in this field could be done in researching possible outliers detection and pattern significance measures to even more simplify interesting pattern detection.
+
+
 
 
 

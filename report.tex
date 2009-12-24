@@ -21,7 +21,7 @@
 \maketitle
 
 \begin{abstract}
-In  this paper, we will conduct a case study of mining frequent user access patterns from web log files.
+In this paper, we conduct a case study of mining frequent user access patterns from web log files.
 \end{abstract}
 
 
@@ -154,7 +154,7 @@ $544237$ requests, of which $122822$ remained after data cleaning. These request
 \section{Frequent item sets} 
 From the perspective of web site design and browsing sessions, the most important question is whether or not there are groups of pages users tend to visit together. The presence of such kinds of groups can give a web designer valuable insight into how people use the web site. For example, content split on separate pages but still often viewed together can be merged to achieve a smoother browsing experience.
 
-We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} tool called \emph{support}.
+We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} concept called \emph{support}.
 
 Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
 \marginpar{\textbf{Riivo:} no see closed itemset asi on vist vigane, sellist  seal keskel vist ikka ei tohisk olla?}
@@ -178,11 +178,11 @@ In addition to the difficulties in choosing an ideal support threshold, there ar
 
 
 \section{Frequent sequential patterns}
-Simply by listing all frequent item sets we won't see much how user actually use website. This is because of two reasons. First, frequent item sets do not capture of the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets. 
+Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets. [eelmise osa lõpus on tegelikult see kirjas juba - kas panna uuesti?]
 
-The solution for this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases i.e. we are mining sequences of clicks that frequently are followed by each other. Frequent sequences can be used to see how user actually tend to navigate and reach some desired resource.
+The solution to this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases, which means that we are searching for sequences of clicks that more often than not are followed by each other. Frequent sequences can be used to see how users actually tend to navigate and reach some desired resource.
 
-To mine frequent patterns from our dataset, we used  an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
+To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a tree to store the candidates\cite{seq_apriori}.
 
 \begin{figure}[H]
   \centering
@@ -192,23 +192,23 @@ To mine frequent patterns from our dataset, we used  an \emph{a priori}-based fr
 
 
 \subsection{Page access times}
-As for every click the timestamp is available when the click was executed, we can find how much time user actually spend on a web page by calculating time interval between two clicks. For every page, we can calculate average time user spend on this page. But this is more effective, if we apply this method to previously found sequential rules. Namely, for every frequent sequence found, we look find all session that contain this sequence and calculate median time for every page in the sequence that users spend on that page.  We choose median time as we consider this more appropriate by experimental evaluation.
+Because the log files contain time and date info for every request made by the user, we know the time of each mouse click the user made (to a precision of 1-2 seconds, taking into account the time it takes for a request to reach the server). Knowing this we can find how much time users actually spend on a web page by calculating the time interval between two clicks. For every page, we can calculate the average time users spend on this page. However a more effective approach is to apply this method to previously found sequential patterns. Namely, for every frequent sequence found, we find all sessions that contain this sequence and calculate median time spent viewing each page in that sequence. We chose median time as we consider this more appropriate for experimental evaluation.
 
-This methods allows us to determine the pages that are visited only because of navigation and not for content. For usability reasons, such pages should be removed to reduce user clicks.
+This method allows us to determine the pages that are visited only because of navigation and not for content. For usability reasons, such pages should be removed to reduce user clicks.
 
 
 
 
 
 \section{Maximal reference sequences}
-Path traversal pattern mining has been studied extensively to find better alternatives to regular frequent sequence mining in web mining context. A solution has been provided \cite{path_patterns} that provides regular sequential patterns, but reduces the patterns only to \emph{forward reference sequences}, that is patterns that only contain forward navigations. Authors of \cite{path_patterns} say that forward reference illustrate what people are looking for e.g. destination pages and eliminate back references from sessions.
+Path traversal pattern mining has been studied extensively to find better alternatives to regular frequent sequence mining in the context of web mining. A solution has been proposed \cite{path_patterns} that provides regular sequential patterns, but reduces the patterns only to \emph{forward reference sequences}, that is patterns that only contain forward navigations. Authors of \cite{path_patterns} say that forward references illustrate what people are looking for (e.g. destination pages) and eliminate back references from sessions.
 
-When applied this algorithm to our dataset, we found almost same rules as with the regular sequential pattern mining technique. The differences was only number of patterns found, namely by eliminating back references and repeating pages, we find less patterns. When  number of patterns is bigger, this methods helps to bring better overview of frequent user traversal path and target pages than previously used.
+When we applied this algorithm to our dataset, we found almost the same frequent patterns as with the regular sequential pattern mining technique. The difference was only the number of patterns found, which means that by eliminating back references and repeating pages, we find less patterns. When the number of patterns is bigger, this method helps to achieve better overview of frequent user traversal paths and target pages than the previously used method.
 
 \section{Changes in patterns through time} 
-Pattern mining can bring insight into how patterns changes in time. When mining school website data, one can hypothesize how users' interest changes in time. We can presume, that August is the pre-semester period and students might be looking for information about new professors, timetables, good seminars provided upcoming semester. When the semester starts in September, it can be assumed that these kinds of aims become outdated and new behavioral patterns arise.
+Pattern mining can also give insight into how patterns change over time. When mining school website data, one can hypothesize how users' interest changes in time. We can presume, that since August is the pre-semester period and students might be looking for information about new professors, timetables or good seminars provided on the upcoming semester. Once the semester starts in September, it can be assumed that these kinds of aims become outdated and new behavioral patterns arise.
 
-We split up the data set into two datasets: August and September and compared sequential rules found for both datasets with same relative support, s=$0.04\%$
+We split up the data set into two: August and September and compared sequential rules found for both datasets with same relative support, s=$0.04\%$.
 
 
 
@@ -220,13 +220,13 @@ We split up the data set into two datasets: August and September and compared se
 
 \section{Restricting patterns by user specified pages}
 
-In our dataset, number of different pages visited is relatively big compared to total number of sessions and average session length and as it can be seen support based rule mining might not find all interesting rules, without lowering support to very low. One idea how to overcome this problem and find easily more appropriate and significant frequent itemsets is following: Identify pages that you are interested in and find all sessions that contain these pages. Now run frequent pattern mining algorithms on the filtered session collection. The output should contain more relevant patterns with higher support and provides a simple way to analyze use cases separately and more thorough.
+In our data set, the number of different pages visited is relatively big compared to the total number of sessions and average session length, and many interesting frequent patterns may not be visible without lowering the support threshhold too much. One idea how to overcome this problem and easily find more appropriate and significant frequent patterns is the following: First, identify pages that you are interested in and find all sessions that contain these pages. Then run frequent pattern mining algorithms on the filtered session collection. The output should contain more relevant patterns with higher support. This method provides a simple way to analyze use cases more separately and thoroughly.
 
-We conducted the experiment and selected session that contain page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but it helped us reveal still more patterns about the page. For example, a   frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users to refresh on the front page before arriving on page \emph{inimesed/Instituudid}.
+We conducted the experiment and focused only on sessions that contained the page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but helped us find more patterns about the page than we had found before. For example, a frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users tend to reload the front page before arriving on \emph{inimesed/Instituudid}.
 
 \section{Summary}
-We have shown practical example how web analytics can be taken beyond Google analytics.
-More work could be done by researching  outliers detection and and pattern significance measures.
+We have shown a practical example of how web analytics can be taken beyond Google analytics.
+More work could be done by researching outliers detection and and pattern significance measures.
 Sequential patterns decorated with times helped us identify a hop-page without even clicking on web site.
 
 

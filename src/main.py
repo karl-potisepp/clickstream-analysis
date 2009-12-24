@@ -28,7 +28,8 @@ def analyse_clickstream(paths, support):
     transactions = [session for session in parser.get_simple_sessions() if config.filter_fn(session)]
     #stats.session_len_graph(parser.get_simple_sessions())
     #stats.page_freq_graph(parser.get_simple_sessions())
-    print "db size after reduction:", len(transactions)
+    db_size = len(transactions)
+    print "db size after reduction:", db_size
     
     # if support is given as a float, it is presumed to be relative support
     # i.e. the minimum percentage of transactions to have a certain itemset
@@ -43,6 +44,7 @@ def analyse_clickstream(paths, support):
 
     # output all sessions into a file
     # row format : "page1" "page2" "page3" ... "pageN"
+    """
     sessions_file = open(config.OUTPUT+"sessions.txt", 'w')
     for session in transactions:
         line = ",".join(session) + '\n'
@@ -56,7 +58,7 @@ def analyse_clickstream(paths, support):
     for r in  results:
         print "\t",r
     
-    """
+    
     lrs, mfs = tree.large_reference_sequences(transactions, min_support)
     times = time_decorator.deocarate_timings(lrs, parser)
     print "Large reference sequences: "
@@ -65,10 +67,21 @@ def analyse_clickstream(paths, support):
     
     """
     print "Apriori and closed itemset: "
+    
+    print "\n\n\n\n\n\n"
+    print "\\begin{tabular}{ r | l }"
+    print "Support & frequent itemset \\\\ \\hline"
+    import operator
     data = apriori.extract_itemsets(transactions, min_support)
-    for itemset in data:
-        print "\t", itemset
+    data = sorted(data, key=operator.itemgetter(1), reverse=True)
+    for itemset, support in data:
+        s = 1.0*support / db_size
+        print round(support,2), "&", 
+        print ", ".join(itemset),","
+        print "\\ \\ \\hline"
 
+    print "\\end{tabular}"
+    print "\n\n\n\n\n\n"
 
 
 

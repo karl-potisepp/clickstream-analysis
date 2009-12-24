@@ -25,7 +25,7 @@
 
 
 \begin{abstract}
-In this paper, we conduct a case study of mining frequent user access patterns from web log files. Our primary objective was to discover the most frequent browsing patterns by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining. To achieve this, we eliminated garbage data from the access logs, grouped the remaining data into sessions and searched them for interesting usage patterns. During this work we experimented with several frequent item set mining algorithms and tools. As a result of our work we provide this case study and some statistics about the usage patterns of the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu.
+In this paper, we conduct a case study of mining frequent user access patterns from web log files. Our primary objective was to discover the most frequent browsing patterns by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining. To achieve this, we eliminated irrelevant data from the access logs, extracted user sessions and searched them interesting usage patterns. During this work we experimented with several frequent itemset mining algorithms and tools. As a result of our work we provide this case study and some statistics about the usage patterns of the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu.
 \end{abstract}
 
 
@@ -34,7 +34,7 @@ In this paper, we conduct a case study of mining frequent user access patterns f
 
 \section{Introduction} 
 Understanding how users navigate and browse through web sites is important in many aspects, such as content recommendation,
-personalization and targeted advertising. Even more, it helps to understand users' needs and provides real world input to better organization of content and structure. Having on hand the web server log files of a web site can provide important insight to the users' behavior, because from this data one can reconstruct a reasonably accurate overview of how users navigate their way to whatever content they desire. Coupled with data mining algorithms it is therefore quite probable that important knowledge can be gained.
+personalization and targeted advertising. Even more, it helps to understand users' needs and provides real world input to better organization of content and structure. Web server log files can provide important insight to the users' behavior, because from this data one can reconstruct a reasonably accurate overview of how users navigate their way to whatever content they desire. Coupled with data mining algorithms it is therefore quite probable that important knowledge can be gained.
 
 As an experimental case study, we studied the web access logs from the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu\footnote{\url{http://math.ut.ee}}. Our aim was to try and find meaningful use-cases from log files and identify possible bottlenecks in the presentation layer and provide some input for user interface redesign.
 
@@ -43,9 +43,9 @@ As an experimental case study, we studied the web access logs from the public we
 
 
 \section{Data preparation} 
-For each time an user visits a web page, a piece of information is typically stored in a web server's log file. When user navigates around a website, all such pieces of information (alternatively called requests or clicks) form a session (click-stream). We consider a session as an user's single visit (i.e. a search for a phone number or information about entrance exams) to the website and associate each click with one session. 
+For each time an user visits a web page, a piece of information is typically stored in a web server's log file. When user navigates around a website, all such pieces of information (alternatively called requests or clicks) form a session (click-stream). We consider user's single purposed visit  (i.e. a search for a phone number or information about entrance exams) as a session and associate each user click with a particular session. 
 
-Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of :(i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Protocol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted\ref{log_sample}.
+Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of:  (i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Protocol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted\ref{log_sample}.
 
 Log files contain all HTTP requests made to the web server, including requests for downloading images and style sheet documents attached to the web pages served.
 
@@ -62,7 +62,7 @@ Log files contain all HTTP requests made to the web server, including requests f
 \caption{Example of a log file}
 \end{figure}
 
-Two important tasks must be performed before clickstream data from \emph{CLF} files can be used for analyzing: data cleaning and session identification.
+Two important tasks must be performed before click-stream data from \emph{CLF} files can be used for analyzing: data cleaning and session identification.
 
 
 
@@ -82,7 +82,7 @@ Since log files contain all requests made to the server, we need to extract only
 \end{itemize}
 
 
-Moreover, we modified requested URLs by removing query string attributes (the part of the URL that starts with ?). We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce the number of different URLs while preserving meaningful information about the usage patterns.
+Moreover, we modified requested URLs by removing query string attributes (the part of the URL that starts with \emph{?}). We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce the number of different URLs while preserving meaningful information about the usage patterns.
 
 After performing all the procedures described above, the log files contained only information about the HTTP requests originating from intentional clicks made by the users on pages. These clicks can be grouped into users' click-streams.
 
@@ -99,10 +99,9 @@ After performing all the procedures described above, the log files contained onl
 \subsection{Session identification}
 The next step was to group user requests made during one visit into sessions. A user session is defined as a sequence of temporally compact accesses by a user \cite{on_mining_logs}.
 
-Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since CLF does not store an explicit session ID, and since we could not modify the existing software stack, we had to use the data that was on hand.  
+Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since CLF does not store an explicit session ID, and since we could not modify the existing software stack, we had to reconstruct user sessions from log files.  
 
-As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in same session, if the time between consecutive requests (clicks) is not more
-than $t = 30$ minutes. If time between requests exceeds $t$, we consider these requests to be part of a new session. While this method is probably not the best, we consider it sufficient as it mimics the way session timeouts are measured on many web sites. We also consider it reasonable to assume that if an user has not interacted with the server for more than $t$
+As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in same session, if the time between consecutive requests (clicks) is no more than $t = 30$ minutes. If time between requests exceeds $30$ minutes, we consider these requests to be part of a new session. While this method is probably not the best, we consider it sufficient as it mimics the way session timeouts are measured on many web sites. We also consider it reasonable to assume that if an user has not interacted with the server for more than $t$
 minutes, any new interaction from an user from the same IP address can be thought of as a new use case scenario.
 
 

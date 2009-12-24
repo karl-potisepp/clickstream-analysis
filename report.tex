@@ -166,9 +166,12 @@ Support & frequent itemset \\ \hline
 0.07 & 15208, inimesedInstituudid \\ \hline
 0.07 & avaleht, 15208, inimesedInstituudid \\ \hline
 \end{tabular}
-  \caption{Frequent closed itemsets with support=$0.06$. Support value is given with rounding error and closed itemsets were found using absolute support.}
+  \caption{Frequent closed itemsets having more than relative support=$0.06$. Support value is given with rounding error and closed itemsets were found using absolute support.}
   \label{frequent_patterns}
 \end{figure}
+
+Analyzing these results gives little new information. As expected, the most frequent pattern is \emph{avaleht}, which is the root page of the faculty's web site. The second most frequent, with relative support almost six times less, is the page containing the names of all students currently pursuing degrees in majors that are tied to the Computer Science and Mathematics faculty - \emph{15213}. In the log files this URL was sometimes followed by a list of HTTP GET attributes used to specify what information should be shown on the page. However since during the extraction step we removed these attributes from all URLs, we could not analyze the exact usage of this page further - such knowledge can probably be obtained from the log files of the database providing the students' data.
+
 
 \section{Frequent sequential patterns}
 Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets.

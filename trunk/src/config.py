@@ -4,7 +4,7 @@ session_timeout = 1800
 
 #if float, then relative is considered
 #if int, then absolute
-support = 0.4
+support = 0.06
 
 filename = [
     "math-access_log",
@@ -35,7 +35,7 @@ paths = [DATA+f for f in filename]
 range_min = 1
 range_max = 100
 
-filter_fn = lambda x: len(x) > 1 and has_keywords(x)
+filter_fn = lambda x: len(x) > 1
 
 
 def has_keywords(x):

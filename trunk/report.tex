@@ -1,4 +1,4 @@
-\documentclass[11pt, english,a4paper]{article}
+\documentclass[10pt, english,a4paper]{article}
 
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
@@ -130,14 +130,6 @@ $544237$ requests, of which $122822$ remained after data cleaning. These request
 
 
 
-
-
-
-
-
-
-
-
 \section{Frequent item sets} 
 From the perspective of web site design and browsing sessions, the most important question is whether or not there are groups of pages users tend to visit together. The presence of such kinds of groups can give a web designer valuable insight into how people use the web site. For example, content split on separate pages but still often viewed together can be merged to achieve a smoother browsing experience.
 
@@ -174,6 +166,41 @@ To mine frequent patterns from our dataset, we used an \emph{a priori}-based fre
   \caption{Number of frequent sequential patterns depending on relative support}
 \end{figure}
 
+\begin{figure}[H]
+  \centering
+\begin{tabular}{ r | l }
+Support & frequent sequential pattern \\ \hline
+0.63 & $ \overset{17.0}{avaleht} $ \\ \hline
+0.38 & $ \overset{513.0}{avaleht} \rightarrow \overset{137.0}{avaleht} $ \\ \hline
+0.16 & $ \overset{592.5}{avaleht} \rightarrow \overset{600.5}{avaleht} \rightarrow \overset{237.5}{avaleht} $ \\ \hline
+0.16 & $ \overset{28.0}{ati} $ \\ \hline
+0.13 & $ \overset{11.0}{15213} $ \\ \hline
+0.1 & $ \overset{9.5}{15213} \rightarrow \overset{23.0}{15213} $ \\ \hline
+0.1 & $ \overset{4.0}{inimesedtudengid} $ \\ \hline
+0.09 & $ \overset{4.0}{inimesedInstituudid} $ \\ \hline
+0.09 & $ \overset{42.0}{15208} $ \\ \hline
+0.09 & $ \overset{110.5}{avaleht} \rightarrow \overset{117.0}{15213} $ \\ \hline
+0.09 & $ \overset{8.0}{avaleht} \rightarrow \overset{4.0}{inimesedtudengid} $ \\ \hline
+0.09 & $ \overset{255.0}{ati} \rightarrow \overset{179.5}{ati} $ \\ \hline
+0.09 & $ \overset{21.0}{15205} $ \\ \hline
+0.08 & $ \overset{4.0}{inimesedtudengid} \rightarrow \overset{8.0}{15213} $ \\ \hline
+0.08 & $ \overset{7.0}{avaleht} \rightarrow \overset{4.0}{inimesedInstituudid} $ \\ \hline
+0.08 & $ \overset{429.0}{avaleht} \rightarrow \overset{474.0}{avaleht} \rightarrow \overset{401.0}{avaleht} \rightarrow \overset{171.5}{avaleht} $ \\ \hline
+0.08 & $ \overset{7.0}{avaleht} \rightarrow \overset{4.0}{inimesedtudengid} \rightarrow \overset{7.5}{15213} $ \\ \hline
+0.08 & $ \overset{81.0}{avaleht} \rightarrow \overset{67.0}{15213} \rightarrow \overset{69.0}{15213} $ \\ \hline
+0.07 & $ \overset{97.5}{avaleht} \rightarrow \overset{73.0}{15208} $ \\ \hline
+0.07 & $ \overset{4.0}{inimesedtudengid} \rightarrow \overset{7.0}{15213} \rightarrow \overset{18.0}{15213} $ \\ \hline
+0.07 & $ \overset{4.0}{inimesedInstituudid} \rightarrow \overset{31.5}{15208} $ \\ \hline
+0.07 & $ \overset{8.0}{avaleht} \rightarrow \overset{4.0}{inimesedtudengid} \rightarrow \overset{7.0}{15213} \rightarrow \overset{18.0}{15213} $ \\ \hline
+0.07 & $ \overset{8.0}{avaleht} \rightarrow \overset{19.0}{15205} $ \\ \hline
+0.07 & $ \overset{6.0}{avaleht} \rightarrow \overset{3.0}{inimesedInstituudid} \rightarrow \overset{30.0}{15208} $ \\ \hline
+0.07 & $ \overset{9.0}{15213} \rightarrow \overset{20.0}{15213} \rightarrow \overset{7.0}{15213} $ \\ \hline
+0.06 & $ \overset{59.5}{oppetootunniplaanid} $ \\ \hline
+\end{tabular}
+  \caption{Frequent sequential patterns with time decorations. Time is given in seconds and is calculated by taking median value of time spent on that page that contains specified rule. }
+  \label{frequent_patterns}
+\end{figure}
+
 
 \subsection{Page access times}
 Because the log files contain time and date info for every request made by the user, we know the time of each mouse click the user made (to a precision of 1-2 seconds, taking into account the time it takes for a request to reach the server). Knowing this we can find how much time users actually spend on a web page by calculating the time interval between two clicks. For every page, we can calculate the average time users spend on this page. However a more effective approach is to apply this method to previously found sequential patterns. Namely, for every frequent sequence found, we find all sessions that contain this sequence and calculate median time spent viewing each page in that sequence. We chose median time as we consider this more appropriate for experimental evaluation.
@@ -193,14 +220,6 @@ When we applied this algorithm to our dataset, we found almost the same frequent
 Pattern mining can also give insight into how patterns change over time. When mining school website data, one can hypothesize how users' interest changes in time. We can presume, that since August is the pre-semester period and students might be looking for information about new professors, timetables or good seminars provided on the upcoming semester. Once the semester starts in September, it can be assumed that these kinds of aims become outdated and new behavioral patterns arise.
 
 We split up the data set into two: August and September and compared sequential rules found for both datasets with same relative support, s=$0.04\%$.
-
-
-
-\[
- \overset{2.2s}{A} \rightarrow \overset{2.2s}{B} \rightarrow \overset{2.2s}{C}
-\]
-
-
 
 
 \section{Restricting patterns by user specified pages}

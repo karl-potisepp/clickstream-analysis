@@ -6,17 +6,19 @@ def freq_item_count(transactions, min_support):
     freq_item_list = {}
 
     for trans in transactions:
-        for item in trans:
+        for item in set(trans):
             if item in freq_item_list:
                 freq_item_list[item]+=1
             else:
                 freq_item_list[item]=1
     sets = []
     support_db = {}
+    
     for x in freq_item_list:
         if freq_item_list[x]>=min_support:
             sets.append(x)
             support_db[tuple(x)] = freq_item_list[x]
+
     return sets, support_db
 
 def candidate_gen(k_itemset, itemset_size):
@@ -36,6 +38,7 @@ def candidate_gen(k_itemset, itemset_size):
             if len(candidate) == itemset_size+1:
                 if candidate not in freq_set_list:
                     freq_set_list+=[candidate]
+
 
     return freq_set_list
 
@@ -94,6 +97,8 @@ def extract_closed_itemsets(items, supports):
             if set(i) == set(item):
                 return True
         return False
+    if len(items) == 0:
+      return []
     max = len(items[-1])
     closed = []
     

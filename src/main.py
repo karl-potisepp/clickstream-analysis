@@ -21,10 +21,7 @@ def analyse_clickstream(paths, support):
     stats.output_some_statistics()
     
     # sessions from the parser    
-    
-    lens = [len(x) for x in parser.get_simple_sessions()]
-    import numpy
-    print numpy.average(lens)
+
     transactions = [session for session in parser.get_simple_sessions() if config.filter_fn(session)]
     #stats.session_len_graph(parser.get_simple_sessions())
     #stats.page_freq_graph(parser.get_simple_sessions())
@@ -76,9 +73,9 @@ def analyse_clickstream(paths, support):
     data = sorted(data, key=operator.itemgetter(1), reverse=True)
     for itemset, support in data:
         s = 1.0*support / db_size
-        print round(support,2), "&", 
-        print ", ".join(itemset),","
-        print "\\ \\ \\hline"
+        print round(s,2), "&", 
+        print ", ".join(itemset), 
+        print "\\\\ \\hline"
 
     print "\\end{tabular}"
     print "\n\n\n\n\n\n"

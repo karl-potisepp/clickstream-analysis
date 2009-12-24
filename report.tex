@@ -1,4 +1,4 @@
-\documentclass[english,a4paper]{article}
+\documentclass[11pt, english,a4paper]{article}
 
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
@@ -11,6 +11,9 @@
 
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{amsmath}
+
+
 \graphicspath{{./figures/}}
 \begin{document}
 
@@ -19,6 +22,7 @@
 \author{Riivo Kikas, Karl Potisepp}
 \date{\today}
 \maketitle
+\tableofcontents
 
 \begin{abstract}
 In this paper, we conduct a case study of mining frequent user access patterns from web log files. Our primary objective was to discover the most frequent browsing patterns by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining. To achieve this, we eliminated garbage data from the access logs, grouped the remaining data into sessions and searched them for interesting usage patterns. During this work we experimented with several frequent item set mining algorithms and tools. As a result of our work we provide this case study and some statistics about the usage patterns of the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu.
@@ -55,7 +59,7 @@ It must be mentioned, that log files contain all HTTP requests made to the web s
 \end{verbatim}
 }
 \label{log_sample}
-\caption{Example of log file}
+\caption{Example of a log file}
 \end{figure}
 
 Two important tasks must be performed before clickstream data from \emph{CLF} files can be used for analyzing: data cleaning and session identification.
@@ -162,7 +166,7 @@ Simply by listing all frequent item sets we will not see much of how users actua
 
 The solution to this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases, which means that we are searching for sequences of clicks that more often than not are followed by each other. Frequent sequences can be used to see how users actually tend to navigate and reach some desired resource.
 
-To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a tree to store the candidates\cite{seq_apriori}.
+To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
 
 \begin{figure}[H]
   \centering
@@ -192,8 +196,9 @@ We split up the data set into two: August and September and compared sequential 
 
 
 
-
-
+\[
+ \overset{2.2s}{A} \rightarrow \overset{2.2s}{B} \rightarrow \overset{2.2s}{C}
+\]
 
 
 

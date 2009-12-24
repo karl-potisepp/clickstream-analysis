@@ -74,8 +74,8 @@ def extract_itemsets(transactions, min_support):
         candidate_set = candidate_gen(itemsets, itemset_size)
         #prune candidates that have less than min_support
         itemsets, support_db = prune(transactions, candidate_set, min_support)    
-    
-    return filter_duplicates(rules, supports)
+    #rules, a = filter_duplicates(rules, supports)
+    return extract_closed_itemsets(rules, supports)
 
 def filter_duplicates(rules, supports):
   filtered = []
@@ -86,11 +86,11 @@ def filter_duplicates(rules, supports):
         add = False
     if add: filtered.append(item)
   
-  return filtered
+  return filtered, supports
 
 def extract_closed_itemsets(items, supports):
     def present(closed, item):
-        for i in closed:
+        for i,p in closed:
             if set(i) == set(item):
                 return True
         return False
@@ -101,11 +101,11 @@ def extract_closed_itemsets(items, supports):
         support = supports[tuple(item)]
         #size = len(item)
         if len(item) == max and not present(closed, item):
-            closed.append(item)
+            closed.append((item, support))
             continue
         for remaining in items:
             if set(remaining) >= set(item) and supports[tuple(remaining)] < support and not present(closed, item):
-                  closed.append(item)
+                  closed.append((item, support))
                   break
     
     return closed

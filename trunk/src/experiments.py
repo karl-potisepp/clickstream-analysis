@@ -45,7 +45,7 @@ def analyse_clickstream(paths, support):
     ax.set_xlabel('Relative support')
     ax.set_ylabel('Number of frequent patterns')
     ax.grid(True)
-    pylab.savefig(config.OUTPUT+"apriori_itemset_count.pdf")
+    pylab.savefig(config.OUTPUT+"apriori_closed_itemset_count.pdf")
     
             
 

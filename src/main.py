@@ -51,7 +51,7 @@ def analyse_clickstream(paths, support):
 
 
     results = fsm_wrapper.fpm(transactions, min_support)
-    times = time_decorator.deocarate_timings(results, parser)
+    times = time_decorator.deocarate_timings(results, parser, len(transactions))
     print "Sequential patterns: "
     for r in  results:
         print "\t",r

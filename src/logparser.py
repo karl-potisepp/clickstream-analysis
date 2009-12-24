@@ -42,7 +42,7 @@ class LogParser:
         if len(line.url) > 0 and line.url[0] == "/":
             line.url = line.url[1:]
         
-        line.url = line.url.replace("/", "_")
+        #line.url = line.url.replace("/", "_")
         if len(line.url) == 0:
             line.url = "avaleht"
         

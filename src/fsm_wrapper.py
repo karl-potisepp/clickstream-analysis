@@ -49,12 +49,22 @@ def fpm(trans, support=100, file="woot.txt"):
 
         
 def decode(rows, codebook):
+    tts = 0
     new_rows = []
+    first = True
     for row in rows:
+        if first:
+          tts = int(row.split(" ").pop().replace("(","").replace(")", "").strip()) *1.0
+          first = False
+          continue
         new_row = []
-        for item in row.split(" ")[:-1]:
+        split = row.split(" ")
+        support = split.pop().replace("(","").replace(")", "").strip()
+        support = int(support) * 1.0 / tts
+        for item in split:
             new_row.append(resolve_item(int(item), codebook))
-        new_rows.append(new_row)
+        new_rows.append((new_row, support))
+        
     return new_rows
     
              

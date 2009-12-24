@@ -7,23 +7,30 @@ a pretty naive approach
 '''
 import numpy
 import config
+import operator
 
-def deocarate_timings(patterns, log):
+def deocarate_timings(patterns, log, total):
   """ return a list of average times spent on each page, based on transaction"""
   transactions = log.get_sessions()
+  patterns = sorted(patterns, key=operator.itemgetter(1), reverse=True)
   timings = {}
   for trans in transactions.values():
     if not config.filter_fn(trans): continue
     i = 0
-    for pattern in patterns:
+    for pattern, support in patterns:
       pos = contains(trans, pattern)
       if pos !=-1:
-        timings.setdefault(i, Timing(pattern)).sum(pos, trans)
+        timings.setdefault(i, Timing(pattern, support)).sum(pos, trans)
       i+=1
   
+  print "\n\n\n\n\n\n"
+  print "\\begin{tabular}{ r | l }"
+  print "Support & frequent sequential pattern \\\\ \\hline"
   for k, v in timings.items():
-    v.output()
+    v.output(total)
+  print "\\end{tabular}"
   return timings
+  print "\n\n\n\n\n\n"
   
 
 
@@ -49,9 +56,10 @@ def contains(session, pattern):
 
 class Timing:
   
-  def __init__(self, pattern):
+  def __init__(self, pattern, support):
     self.pattern = pattern
     self.times = []
+    self.support = support
     for _ in self.pattern:
       self.times.append([])
     
@@ -62,10 +70,15 @@ class Timing:
       self.times[i].append(delta.seconds)
 
       
-  def output(self):
-    s = [numpy.around(numpy.average(x),2) for x in self.times]
+  def output(self, total):
     m = [numpy.around(numpy.median(x),2) for x in self.times]
-    print self.pattern
-    print s
-    print m
-    print "="*20
+    first = True
+    print str(round(self.support,2)), "& $",
+    for b, a in zip(self.pattern, m):
+      
+      if not first:
+        print "\\rightarrow",
+      first = False
+      print "\\overset{"+str(a)+"}{"+str(b)+"}",
+    
+    print "$ \\\\ \hline"

@@ -34,7 +34,7 @@ In this paper, we conduct a case study of mining frequent user access patterns f
 
 \section{Introduction} 
 Understanding how users navigate and browse through web sites is important in many aspects, such as content recommendation,
-personalization and targeted advertising. Even more, it helps to understand users' needs and helps and provides real world input to better organization of content and structure. Having on hand the web server log files of a web site can provide important insight to the users' behavior, because from this data one can reconstruct a reasonably accurate overview of how users navigate their way around. Coupled with data mining algorithms it is therefore probable that important knowledge can be gained.
+personalization and targeted advertising. Even more, it helps to understand users' needs and provides real world input to better organization of content and structure. Having on hand the web server log files of a web site can provide important insight to the users' behavior, because from this data one can reconstruct a reasonably accurate overview of how users navigate their way to whatever content they desire. Coupled with data mining algorithms it is therefore quite probable that important knowledge can be gained.
 
 As an experimental case study, we studied the web access logs from the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu\footnote{\url{http://math.ut.ee}}. Our aim was to try and find meaningful use-cases from log files and identify possible bottlenecks in the presentation layer and provide some input for user interface redesign.
 
@@ -43,7 +43,7 @@ As an experimental case study, we studied the web access logs from the public we
 
 
 \section{Data preparation} 
-For each time an user visits a web page, a piece of information is typically stored in a web server's log file. When user navigates around a website, all such pieces of information (alternatively called requests or clicks) form a session (click-stream). We consider a session as an user's single visit to the website and associate each click with to one session.
+For each time an user visits a web page, a piece of information is typically stored in a web server's log file. When user navigates around a website, all such pieces of information (alternatively called requests or clicks) form a session (click-stream). We consider a session as an user's single visit (i.e. a search for a phone number or information about entrance exams) to the website and associate each click with one session. 
 
 Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of :(i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Protocol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted\ref{log_sample}.
 
@@ -74,17 +74,17 @@ Two important tasks must be performed before clickstream data from \emph{CLF} fi
 Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering requests from log files, following rules were applied:
 
 \begin{itemize}
-\item Only requests to the public site are considered. Requests to personal home pages (pages starting with ~) are discarded. Also, all static content files that were used by web pages were removed, such as image files, JavaScript and CSS documents. \\ The server also had had special error page URL, that the user was redirected to when they tried to access a non-existent resource. We eliminated this kind of access requests, as these are not initially made by users. It must be noted that the request for the original page that caused the server to redirect the user remains in the log file.
+\item Only requests to the public site are considered. Requests to personal home pages (URLs starting with ~) are discarded. Also, all static content files that were used by web pages were removed, such as image files, JavaScript and CSS documents. \\ The server also had had special error page URL, that the user was redirected to when they tried to access a non-existent resource. We eliminated this kind of access requests, as these are not initially made by users. It must be noted that the request for the original page that caused the server to redirect the user remains in the log file.
   
-\item All other HTTP request types besides POST and GET were ignored. We noticed that there were regular OPTIONS request, that most probably were made by some automated monitoring tool. 
+\item All other HTTP request types besides POST and GET were ignored. We noticed that there were regular OPTIONS requests, that most probably were made by some automated monitoring tool. 
   
 \item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP-address was added to blacklist, if there was a request made from the IP address to access \emph{robots.txt} file. Namely, we believe that only automated indexers request robot.txt and therefore we can ignore all subsequent requests from those IP-s, since we are only interested in how a human user perceives the web site. 
 \end{itemize}
 
 
-In addition to that, we modified requested URLs by removing query string attributes(the part of the URL that starts with ?). We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce number of different URLs while preserving meaningful information about the usage patterns.
+Moreover, we modified requested URLs by removing query string attributes (the part of the URL that starts with ?). We assumed that typically URLs identify a distinct page and query-string some operation or action on it. This helped us to reduce the number of different URLs while preserving meaningful information about the usage patterns.
 
-After performing all the procedures described above, the log files now contain only information about the HTTP requests originating from intentional clicks made by the users on pages. These requests can be grouped into users' click-streams.
+After performing all the procedures described above, the log files contained only information about the HTTP requests originating from intentional clicks made by the users on pages. These clicks can be grouped into users' click-streams.
 
 
 
@@ -99,7 +99,7 @@ After performing all the procedures described above, the log files now contain o
 \subsection{Session identification}
 The next step was to group user requests made during one visit into sessions. A user session is defined as a sequence of temporally compact accesses by a user \cite{on_mining_logs}.
 
-Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since CLF does not store an explicit session ID, and since we could not modify the existing software stack, we had to use the data that was already given.  
+Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since CLF does not store an explicit session ID, and since we could not modify the existing software stack, we had to use the data that was on hand.  
 
 As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in same session, if the time between consecutive requests (clicks) is not more
 than $t = 30$ minutes. If time between requests exceeds $t$, we consider these requests to be part of a new session. While this method is probably not the best, we consider it sufficient as it mimics the way session timeouts are measured on many web sites. We also consider it reasonable to assume that if an user has not interacted with the server for more than $t$
@@ -112,8 +112,7 @@ minutes, any new interaction from an user from the same IP address can be though
 
 
 \subsection{Statistics about the logs} 
-The log files contained info about requests made to the server from August to December 2009, with October data missing. In total, log files contained 
-$544237$ requests, of which $122822$ remained after data cleaning. These requests were grouped to $35952$ sessions. Average session length was $3.4$ clicks. Distribution of user session length can be see on figure \ref{session_len}. Requests involved $2059$ distinct URLs. 
+The log files contained info about requests made to the server from August to December 2009, with October data missing. In total, log files contained $544237$ requests, of which $122822$ remained after eliminating uninformative lines. These requests were grouped to $35952$ sessions. The average session length was $3.4$ clicks. Distribution of user session length can be seen on figure \ref{session_len}. Requests involved $2059$ distinct URLs.
 
 \begin{figure}[H]
   \centering
@@ -135,7 +134,7 @@ From the perspective of web site design and browsing sessions, the most importan
 
 We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} concept called \emph{support}.
 
-Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
+Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common (and therefore not interesting). The only problem is that there is no magic bullet solution to choosing the 'right' support threshold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
 \begin{figure}[H]
   \centering
       \includegraphics[width=0.9\textwidth]{apriori_closed_itemset_count}
@@ -177,7 +176,7 @@ Support & frequent itemset \\ \hline
 \section{Frequent sequential patterns}
 Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets.
 
-The solution to this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases, which means that we are searching for sequences of clicks that more often than not are followed by each other. Frequent sequences can be used to see how users actually tend to navigate and reach some desired resource.
+This problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases, which means that we are searching for sequences of clicks that more often than not are followed by each other. Frequent sequences can be used to see how users actually tend to navigate and reach some desired resource.
 
 To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
 

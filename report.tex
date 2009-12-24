@@ -143,7 +143,7 @@ Support is a number that shows how frequently a subset appears in all item sets.
 \end{figure}
 
 
-However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used the Apriori algorithm \cite{apriori} to find \emph{closed itemsets}.
+However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used the Apriori algorithm \cite{apriori} to first find all frequent item sets, from which we then extracted \emph{closed itemsets}.
 
 In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
 

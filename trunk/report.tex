@@ -21,7 +21,7 @@
 \maketitle
 
 \begin{abstract}
-In this paper, we conduct a case study of mining frequent user access patterns from web log files.
+In this paper, we conduct a case study of mining frequent user access patterns from web log files. Our primary objective was to discover the most frequent browsing patterns by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining. To achieve this, we eliminated garbage data from the access logs, grouped the remaining data into sessions and searched them for interesting usage patterns. During this work we experimented with several frequent item set mining algorithms and tools. As a result of our work we provide this case study and some statistics about the usage patterns of the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu.
 \end{abstract}
 
 
@@ -30,16 +30,9 @@ In this paper, we conduct a case study of mining frequent user access patterns f
 
 \section{Introduction} 
 Understanding how users navigate and browse through web sites is important in many aspects, such as content recommendation,
-personalization and targeted advertising. Even more, it helps to understand users' needs and helps and provides real world input to better organization of content and structure.
+personalization and targeted advertising. Even more, it helps to understand users' needs and helps and provides real world input to better organization of content and structure. Having on hand the web server log files of a web site can provide important insight to the users' behavior.
 
 The aim of this report is to illustrate pattern mining from web logs with example of web access logs from the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu\footnote{\url{http://math.ut.ee}}. Motivation for this study was to find meaningful use-cases from log files and identify possible bottlenecks in the presentation layer and provide some input for user interface redesign.
-
-The primary objective was to discover the most frequent browsing patterns by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining.
-
-Write here about sessions and data. And the overview of the process
-
-
-
 
 
 
@@ -147,7 +140,6 @@ From the perspective of web site design and browsing sessions, the most importan
 We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} concept called \emph{support}.
 
 Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common. The only problem is that there is no magic bullet solution to choosing the 'right' support threshold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
-\marginpar{\textbf{Riivo:} no see closed itemset asi on vist vigane, sellist  seal keskel vist ikka ei tohisk olla?}
 \begin{figure}[H]
   \centering
       \includegraphics[width=0.9\textwidth]{apriori_closed_itemset_count}

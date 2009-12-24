@@ -32,10 +32,9 @@ In this paper, we conduct a case study of mining frequent user access patterns f
 Understanding how users navigate and browse through web sites is important in many aspects, such as content recommendation,
 personalization and targeted advertising. Even more, it helps to understand users' needs and helps and provides real world input to better organization of content and structure.
 
-The aim of this report is to illustrate pattern mining from web logs with example of web access logs from the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu\footnote{\url{http://math.ut.ee}}. Motivation for this study was to find meaningful use-cases from log files and identify possible bottlenecks in the presentation layer and provide some input for user interface redesign. 
+The aim of this report is to illustrate pattern mining from web logs with example of web access logs from the public web site of the Faculty of Mathematics and Computer Science of the University of Tartu\footnote{\url{http://math.ut.ee}}. Motivation for this study was to find meaningful use-cases from log files and identify possible bottlenecks in the presentation layer and provide some input for user interface redesign.
 
-
-The primary objective was to discover the most frequent sequences by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining.
+The primary objective was to discover the most frequent browsing patterns by analyzing the visitors' browsing sessions. The nature of pattern mining carried out was mainly exploratory, concentrating on frequent item sets and sequence mining.
 
 Write here about sessions and data. And the overview of the process
 
@@ -103,20 +102,11 @@ After performing all the procedures described above, the log files now contain o
 \subsection{Session identification}
 The next step was to group user requests made during one visit into sessions. A user session is defined as a sequence of temporally compact accesses by a user \cite{on_mining_logs}.
 
-Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since log files in CLF do not store an explicit session ID, and since we could not modify the existing software stack, we had to use the data that was already given.  
+Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since CLF does not store an explicit session ID, and since we could not modify the existing software stack, we had to use the data that was already given.  
 
-As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in
-same session, if the time between consecutive requests (clicks) is not more
-than $t = 30$ minutes. If time between requests exceeds $t$, we
-consider these requests to be part of a new session. While this method is
-probably not the best, we consider it sufficient as it mimics the way session
-timeouts are measured on many web sites. We also consider it reasonable to
-assume that if an user has not interacted with the server for more than $t$
-minutes, any new interaction from an user from the same IP address can be
-thought of as a new use case scenario.
-
-
-
+As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in same session, if the time between consecutive requests (clicks) is not more
+than $t = 30$ minutes. If time between requests exceeds $t$, we consider these requests to be part of a new session. While this method is probably not the best, we consider it sufficient as it mimics the way session timeouts are measured on many web sites. We also consider it reasonable to assume that if an user has not interacted with the server for more than $t$
+minutes, any new interaction from an user from the same IP address can be thought of as a new use case scenario.
 
 
 
@@ -165,11 +155,9 @@ Support is a number that shows how frequently a subset appears in all item sets.
 \end{figure}
 
 
-However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used another concept: \emph{closed item sets}. An item set is closed if all its proper supersets have smaller support. By searching for only closed item sets, we eliminate uninteresting subsets of already present results and leave only those which provide useful information.
+However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used the Apriori algorithm \cite{apriori} to find \emph{closed itemsets}.
 
-We used the following algorithm to find frequent closed itemsets.
-
-In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. \emph{Frequent sequential item sets} solve these problems at least partially.
+In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
 
 
 
@@ -178,7 +166,7 @@ In addition to the difficulties in choosing an ideal support threshold, there ar
 
 
 \section{Frequent sequential patterns}
-Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets. [eelmise osa lõpus on tegelikult see kirjas juba - kas panna uuesti?]
+Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets.
 
 The solution to this problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases, which means that we are searching for sequences of clicks that more often than not are followed by each other. Frequent sequences can be used to see how users actually tend to navigate and reach some desired resource.
 

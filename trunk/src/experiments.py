@@ -26,8 +26,8 @@ def analyse_clickstream(paths, support):
     while support >= 0.001:
       
         min_support = int(len(transactions) * support)
-        #results = fsm_wrapper.fpm(transactions, min_support)
-        results = apriori.extract_itemsets(transactions, min_support)
+        results = fsm_wrapper.fpm(transactions, min_support)
+        #results = apriori.extract_itemsets(transactions, min_support)
         print support,";",len(results)
         
         x.append(len(results))
@@ -45,7 +45,7 @@ def analyse_clickstream(paths, support):
     ax.set_xlabel('Relative support')
     ax.set_ylabel('Number of frequent patterns')
     ax.grid(True)
-    pylab.savefig(config.OUTPUT+"apriori_closed_itemset_count.pdf")
+    pylab.savefig(config.OUTPUT+"sequential_itemset_count.pdf")
     
             
 

@@ -45,9 +45,9 @@ As an experimental case study, we studied the web access logs from the public we
 \section{Data preparation} 
 For each time an user visits a web page, a piece of information is typically stored in a web server's log file. When user navigates around a website, all such pieces of information (alternatively called requests or clicks) form a session (click-stream). We consider a session as an user's single visit to the website and associate each click with to one session.
 
-Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of :(i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Prototcol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted\ref{log_sample}.
+Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of :(i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Protocol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted\ref{log_sample}.
 
-It must be mentioned, that log files contain all HTTP requests made to the web server, including requests for downloading images and style sheet documents attached to the web pages served.
+Log files contain all HTTP requests made to the web server, including requests for downloading images and style sheet documents attached to the web pages served.
 
 \begin{figure}[h]
 {\tiny
@@ -74,11 +74,11 @@ Two important tasks must be performed before clickstream data from \emph{CLF} fi
 Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering requests from log files, following rules were applied:
 
 \begin{itemize}
-\item Only requests to the public site are considered. Requests to personal homepages (pages starting with ~) are discarded. Also, all static content files that were used by web pages were removed, such as image files, JavaScript and CSS documents. \\ The server also had had special error page url, that the user was redirected to when they tried to access a non-existant resource. We eliminated this kind of access requests, as these are not initially made by users. It must be noted that the request for the original page that caused the server to redirect the user remains in the log file.
+\item Only requests to the public site are considered. Requests to personal home pages (pages starting with ~) are discarded. Also, all static content files that were used by web pages were removed, such as image files, JavaScript and CSS documents. \\ The server also had had special error page URL, that the user was redirected to when they tried to access a non-existent resource. We eliminated this kind of access requests, as these are not initially made by users. It must be noted that the request for the original page that caused the server to redirect the user remains in the log file.
   
 \item All other HTTP request types besides POST and GET were ignored. We noticed that there were regular OPTIONS request, that most probably were made by some automated monitoring tool. 
   
-\item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP address was added to blacklist, if there was a request made from the IP address to access \emph{robots.txt} file. Namely, we believe that only automated indexers request robot.txt and therefore we can ignore all subsequent requests from those IP-s, since we are only interested in how a human user perceives the web site. 
+\item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP-address was added to blacklist, if there was a request made from the IP address to access \emph{robots.txt} file. Namely, we believe that only automated indexers request robot.txt and therefore we can ignore all subsequent requests from those IP-s, since we are only interested in how a human user perceives the web site. 
 \end{itemize}
 
 
@@ -143,13 +143,34 @@ Support is a number that shows how frequently a subset appears in all item sets.
 \end{figure}
 
 
-However even if we manage to choose an optimal value for the support threshhold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used the Apriori algorithm \cite{apriori} to first find all frequent item sets, from which we then extracted \emph{closed itemsets}.
+However even if we manage to choose an optimal value for the support threshold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used the Apriori algorithm \cite{apriori} to first find all frequent item sets, from which we then extracted \emph{closed itemsets}.
 
 In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
 
 
 
-
+\begin{figure}[H]
+  \centering
+\begin{tabular}{ r | l }
+Support & frequent itemset \\ \hline
+0.63 & avaleht \\ \hline
+0.13 & 15213 \\ \hline
+0.1 & inimesedtudengid \\ \hline
+0.1 & avaleht, 15213 \\ \hline
+0.09 & inimesedInstituudid \\ \hline
+0.09 & 15208 \\ \hline
+0.09 & avaleht, inimesedtudengid \\ \hline
+0.09 & 15205 \\ \hline
+0.08 & avaleht, inimesedInstituudid \\ \hline
+0.08 & 15213, inimesedtudengid \\ \hline
+0.08 & avaleht, 15213, inimesedtudengid \\ \hline
+0.08 & avaleht, 15208 \\ \hline
+0.07 & 15208, inimesedInstituudid \\ \hline
+0.07 & avaleht, 15208, inimesedInstituudid \\ \hline
+\end{tabular}
+  \caption{Frequent closed itemsets with support=$0.06$. Support value is given with rounding error and closed itemsets were found using absolute support.}
+  \label{frequent_patterns}
+\end{figure}
 
 
 
@@ -224,7 +245,7 @@ We split up the data set into two: August and September and compared sequential 
 
 \section{Restricting patterns by user specified pages}
 
-In our data set, the number of different pages visited is relatively big compared to the total number of sessions and average session length, and many interesting frequent patterns may not be visible without lowering the support threshhold too much. One idea how to overcome this problem and easily find more appropriate and significant frequent patterns is the following: First, identify pages that you are interested in and find all sessions that contain these pages. Then run frequent pattern mining algorithms on the filtered session collection. The output should contain more relevant patterns with higher support. This method provides a simple way to analyze use cases more separately and thoroughly.
+In our data set, the number of different pages visited is relatively big compared to the total number of sessions and average session length, and many interesting frequent patterns may not be visible without lowering the support threshold too much. One idea how to overcome this problem and easily find more appropriate and significant frequent patterns is the following: First, identify pages that you are interested in and find all sessions that contain these pages. Then run frequent pattern mining algorithms on the filtered session collection. The output should contain more relevant patterns with higher support. This method provides a simple way to analyze use cases more separately and thoroughly.
 
 We conducted the experiment and focused only on sessions that contained the page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but helped us find more patterns about the page than we had found before. For example, a frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users tend to reload the front page before arriving on \emph{inimesed/Instituudid}.
 

@@ -71,14 +71,14 @@ Two important tasks must be performed before click-stream data from \emph{CLF} f
 
 
 \subsection{Data cleaning}
-Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering requests from log files, following rules were applied:
+Since log files contain all requests made to the server, we need to extract only relevant requests and eliminate others. When filtering the requests from log files, we applied the following rules:
 
 \begin{itemize}
-\item Only requests to the public site are considered. Requests to personal home pages (URLs starting with ~) are discarded. Also, all static content files that were used by web pages were removed, such as image files, JavaScript and CSS documents. \\ The server also had had special error page URL, that the user was redirected to when they tried to access a non-existent resource. We eliminated this kind of access requests, as these are not initially made by users. It must be noted that the request for the original page that caused the server to redirect the user remains in the log file.
+\item Only requests to the public site are considered. Requests to personal home pages (URLs starting with ~) are discarded. Also, all static content files that were used by web pages were removed, such as image files, JavaScript and CSS documents. \\ The server also had had special error page URL that the user was redirected to when they tried to access a non-existent resource. We ignored this kind of access requests, as they are not initially made by users. It must be noted that the request for the original page that caused the server to redirect the user remains in the log file.
   
 \item All other HTTP request types besides POST and GET were ignored. We noticed that there were regular OPTIONS requests, that most probably were made by some automated monitoring tool. 
   
-\item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP-address was added to blacklist, if there was a request made from the IP address to access \emph{robots.txt} file. Namely, we believe that only automated indexers request robot.txt and therefore we can ignore all subsequent requests from those IP-s, since we are only interested in how a human user perceives the web site. 
+\item We composed a blacklist of of IP addresses, whose requests were all ignored. An IP-address was added to blacklist if there was a request made from the IP address to access \emph{robots.txt} file. Namely, we believe that only automated indexers request robot.txt and therefore we can ignore all subsequent requests from those IP-s, since we are only interested in how a human user perceives the web site. 
 \end{itemize}
 
 
@@ -99,9 +99,9 @@ After performing all the procedures described above, the log files contained onl
 \subsection{Session identification}
 The next step was to group user requests made during one visit into sessions. A user session is defined as a sequence of temporally compact accesses by a user \cite{on_mining_logs}.
 
-Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since CLF does not store an explicit session ID, and since we could not modify the existing software stack, we had to reconstruct user sessions from log files.  
+Generally, this can be done by providing a cookie to each user with some generated unique identification number and then logging each request and the cookie ID simultaneously. However since CLF does not store an explicit session ID, and since we could not modify the existing software stack, we had to reconstruct user sessions from the log files.  
 
-As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in same session, if the time between consecutive requests (clicks) is no more than $t = 30$ minutes. If time between requests exceeds $30$ minutes, we consider these requests to be part of a new session. While this method is probably not the best, we consider it sufficient as it mimics the way session timeouts are measured on many web sites. We also consider it reasonable to assume that if an user has not interacted with the server for more than $t$
+As a solution, we used a timeout based method to group requests into sessions. We consider a sequence of requests from the same IP address ordered by time to be in same session if the time between consecutive requests is no more than $t = 30$ minutes. If it exceeds $30$ minutes, we consider these requests to be part of a new session. While this method is probably not the best, we consider it sufficient as it mimics the way session timeouts are measured on many web sites. We also consider it reasonable to assume that if an user has not interacted with the server for more than $t$
 minutes, any new interaction from an user from the same IP address can be thought of as a new use case scenario.
 
 
@@ -116,7 +116,7 @@ The log files contained info about requests made to the server from August to De
 \begin{figure}[H]
   \centering
       \includegraphics[width=0.9\textwidth]{session_len}
-  \caption{Session length histogram}
+  \caption{Session length histogram with session length in minutes.}
   \label{session_len}
 \end{figure}
 
@@ -129,23 +129,23 @@ The log files contained info about requests made to the server from August to De
 
 
 \section{Frequent item sets} 
-From the perspective of web site design and browsing sessions, the most important question is whether or not there are groups of pages users tend to visit together. The presence of such kinds of groups can give a web designer valuable insight into how people use the web site. For example, content split on separate pages but still often viewed together can be merged to achieve a smoother browsing experience.
+From the perspective of designing a web site's navigation system, a very important question is whether or not there are groups of pages users tend to visit together. The presence of such groups can give a web designer valuable insight into how people use the web site. For example, content split on separate pages but still often viewed together can be merged to achieve a smoother browsing experience and pages which are visited only to reach other more important (to the user) pages can be eliminated.
 
-We approached the task of identifying such groups by thinking of every page as a unique \emph{item}, which then form sets, each containing pages visited during one browsing session. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a set mining \cite{frequent_item_set_mining} concept called \emph{support}.
+We approached the task of identifying such groups from the perspective of frequent item set mining by \cite{frequent_item_set_mining}. We considered every page as a unique \emph{item} and each session as a transaction or more accurately, an item set. To find pages that are frequently visited together, we searched among these sets for subsets of pages that frequently appear together. The problem now was deciding when a subset of pages is frequent. We solved this by using a frequent item set mining concept called \emph{support}.
 
-Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common (and therefore not interesting). The only problem is that there is no magic bullet solution to choosing the 'right' support threshold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
+Support is a number that shows how frequently a subset appears in all item sets. Using this concept, it is trivial to eliminate subsets that are not common enough (and therefore not interesting). The only problem is that there is no magic bullet solution to choosing the 'right' support threshold. A value too high does not provide insight into more specific subsets, a value too low results in too much non-frequent garbage.
 \begin{figure}[H]
   \centering
       \includegraphics[width=0.9\textwidth]{apriori_closed_itemset_count}
-  \caption{How rule support changes number of frequent closed itemsets}
+  \caption{ The number of frequent closed itemsets changes as the support threshhold increases. }
 \end{figure}
 
 
 However even if we manage to choose an optimal value for the support threshold, after filtering out all the infrequent subsets, some redundancy remains in the results. It is easy to see that if a set of 5 pages appears frequently throughout the sessions, all 4 page subsets of that set appear at least as frequently. To eliminate this kind of noise, we used the Apriori algorithm \cite{apriori} to first find all frequent item sets, from which we then extracted \emph{closed itemsets}.
 
-In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
+In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. By knowing this we would also have an idea of how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
 
-From \ref{frequent_patterns}, it can be seen that the root page of the web site (\emph{avaleht}) is one of the most frequently accessed resources, which is expected. The advantage of frequent pattern mining can be explained with the itemset where pages \emph{avaleht, 15208, inimesedInstituudid} are present together: it shows that navigation usually starts from the root page and also that the page containing links to different departments' contact information (\emph{inimesedInstituudid}) is used as a gateway to the page listing all the faculty members (\emph{15208}). The order in which the pages were navigated is not obvious, and looking at the web site we see that there do exist links to go either way. This problem can be solved by storing browsing sessions as sequences and mining frequent sequential patterns.
+However, even ordinary frequent item site mining can provide some information. From \ref{frequent_patterns}, it can be seen that the root page of the web site (\emph{avaleht}) is one of the most frequently accessed resources, which is expected. The advantage of frequent pattern mining can be explained with the itemset where pages \emph{avaleht, 15208, inimesedInstituudid} are present together: it shows that navigation usually starts from the root page and also that the page containing links to different departments' contact information (\emph{inimesedInstituudid}) is used as a gateway to the page listing all the faculty members (\emph{15208}). The order in which the pages were navigated is not obvious, and looking at the web site we see that there do exist links to go either way. We provide a solution to this problem in the next section.
 
 \begin{figure}[H]
   \centering
@@ -172,7 +172,7 @@ Support & frequent itemset \\ \hline
 
 
 \section{Frequent sequential patterns}
-Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets.
+Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons: firstly, frequent item sets do not capture the order of pages visited, and secondly, information about multiple page visits is lost when constructing item sets.
 
 This problem can be solved by mining frequent sequential item sets. Sequential pattern mining is about mining frequent event sequences from databases, which means that we are searching for sequences of clicks that more often than not are followed by each other. Frequent sequences can be used to see how users actually tend to navigate and reach some desired resource.
 
@@ -183,16 +183,16 @@ This problem can be solved by mining frequent sequential item sets. Sequential p
 \end{figure}
 
 
-To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
+To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates \cite{seq_apriori}.
 
 
-Compared to simple frequent itemsets, sequential patterns yield to more interesting results (\ref{frequent_patterns}). The first thing to notice is a continuous reloading of the root page repeating over quite big time intervals. Our guess is that this is caused by the people who have set the faculty web site as their browser's home page, which causes the faculty's page to be loaded each time a new browser window is opened. We have no better explanation for this phenomenon as the main page is currently pretty static and is seldom updated.
+Compared to simple frequent itemsets, sequential patterns reveal more interesting results (\ref{frequent_patterns}). The first thing to notice is a continuous reloading of the root page repeating over quite big time intervals. Our guess is that this is caused by the people who have set the faculty web site as their browser's home page, which causes the faculty's page to be loaded each time a new browser window is opened. We have no better explanation for this phenomenon as the main page is currently pretty static and is seldom updated.
 
 The most important results from a usability point of view are the patterns where users visit page \emph{inimesedInstituudid}. Users spend relatively little time on this page, for example in the sequence
 \[ 
 \overset{6.0}{avaleht} \rightarrow \overset{3.0}{inimesedInstituudid} \rightarrow \overset{30.0}{15208} 
 \]
-the median of time spent is only 3 seconds, but the next page the user requested is viewed for 30seconds. The probable reasons for this is that the page \emph{inimesedInstituudid} is only a navigational page - it just links to other more important pages. Since users tend to spend only a few seconds choosing the right path, this page can probably be removed by merging the content of the pages it links to, or providing the links on a previous page.
+the median of time spent is only 3 seconds, but the next page the user requested is viewed for 30seconds. The probable reason for this is that the page \emph{inimesedInstituudid} is only a navigational page - it just links to other more important pages. Since users tend to spend only a few seconds choosing the right path, this page can probably be removed by merging the content of the pages it links to, or providing the links on a previous page.
 
 
 
@@ -234,9 +234,9 @@ Support & frequent sequential pattern \\ \hline
 
 
 \subsection{Page access times}
-Because the log files contain time and date info for every request made by the user, we know the time of each mouse click the user made (to a precision of 1-2 seconds, taking into account the time it takes for a request to reach the server). Knowing this we can find how much time users actually spend on a web page by calculating the time interval between two clicks. For every page, we can calculate the average time users spend on this page. However a more effective approach is to apply this method to previously found sequential patterns. Namely, for every frequent sequence found, we find all sessions that contain this sequence and calculate median time spent viewing each page in that sequence. We chose median time as we consider this more appropriate for experimental evaluation.
+Because the log files contain time and date info for every request made by the user, we know the time of each mouse click the user made (to a precision of 1-2 seconds, taking into account the time it takes for a request to reach the server). From this we can find how much time users actually spend on a web page by calculating the time interval between two clicks. For every page, we can calculate the average time users spend on this page. However a more effective approach is to apply this method to previously found sequential patterns. Namely, for every frequent sequence found, we found all sessions that contain the sequence and calculated median time spent viewing each page in that sequence. We chose median time as we consider this more appropriate for experimental evaluation.
 
-This method allows us to determine the pages that are visited only because of navigation and not for content. For usability reasons, such pages should be removed to reduce user clicks.
+This method allowed us to determine the pages that are visited only because of navigation and not for content. For usability reasons, such pages should be removed to reduce user clicks.
 
 
 
@@ -250,7 +250,7 @@ When we applied this algorithm to our dataset, we found almost the same frequent
 \section{Changes in patterns through time} 
 Pattern mining can also give insight into how patterns change over time. When mining school website data, one can hypothesize how users' interest changes in time. We can presume, that since August is the pre-semester period and students might be looking for information about new professors, timetables or good seminars provided on the upcoming semester. Once the semester starts in September, it can be assumed that these kinds of aims become outdated and new behavioral patterns arise.
 
-We split up the data set into two: August and September and compared sequential patterns found for both datasets with same relative support, s=$0.06\%$.
+We split up the data set into two: August and September and compared sequential patterns found for both datasets with same relative support, s=$0.06$.
 
 Results reveal that in September\ref{sep2}, a frequently accessed page was \emph{/116245}, a news item announcing semester's official introduction event and first dates for lectures. This page was not present in august data as it was published on last day of August\ref{aug2}. Contrary to this, the page listing general news(\emph{yldteated}) had support of $0.07$ in August, but in September it was below $0.06$. 
 
@@ -303,13 +303,13 @@ Support & frequent itemset \\ \hline
 0.08 & avaleht, 15208, inimesedInstituudid \\ \hline
 0.07 & oppetoooppekavad \\ \hline
 \end{tabular}
-  \caption{Frequent itemsets for september }
+  \caption{Frequent itemsets for September }
   \label{sep2}
 \end{figure}
 
 
 \section{Restricting patterns by user specified pages}
-In our data set, the number of different pages visited is relatively big compared to the total number of sessions and average session length, and many interesting frequent patterns may not be visible without lowering the support threshold too much. One idea how to overcome this problem and easily find more appropriate and significant frequent patterns is the following: First, identify pages that you are interested in and find all sessions that contain these pages. Then run frequent pattern mining algorithms on the filtered session collection. The output should contain more relevant patterns with higher support. This method provides a simple way to analyze use cases more separately and thoroughly.
+In our data set, the number of different pages visited is relatively big compared to the total number of sessions and average session length, and many interesting frequent patterns may not be visible without lowering the support threshold too much. A solution for overcoming this problem is to identify interesting pages and restrict frequent pattern mining algorithms to sessions containing these pages. The output should contain more relevant patterns with higher support. This method provides a simple way to analyze use cases more separately and thoroughly.
 
 We conducted the experiment and focused only on sessions that contained the page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but helped us find more patterns about the page than we had found before. For example, a frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users tend to reload the front page before arriving on \emph{inimesed/Instituudid}.
 

@@ -45,7 +45,7 @@ As an experimental case study, we studied the web access logs from the public we
 \section{Data preparation} 
 For each time an user visits a web page, a piece of information is typically stored in a web server's log file. When user navigates around a website, all such pieces of information (alternatively called requests or clicks) form a session (click-stream). We consider user's single purposed visit  (i.e. a search for a phone number or information about entrance exams) as a session and associate each user click with a particular session. 
 
-Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of:  (i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Protocol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted\ref{log_sample}.
+Input data is stored in website log files, namely in Common Log Format\cite{ref_clf} format. Each log entry consists of:  (i) User's IP address, (ii) Access time, (iii) Request method (\emph{GET}, \emph{POST}), etc), (iv) URL of the page accessed, (v) Protocol (typically HTTP/1.0), (vi) Return code, (vii) Number of bytes transmitted (Figure \ref{log_sample}).
 
 Log files contain all HTTP requests made to the web server, including requests for downloading images and style sheet documents attached to the web pages served.
 
@@ -145,7 +145,7 @@ However even if we manage to choose an optimal value for the support threshold, 
 
 In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. By knowing this we would also have an idea of how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
 
-However, even ordinary frequent item site mining can provide some information. From \ref{frequent_patterns}, it can be seen that the root page of the web site (\emph{avaleht}) is one of the most frequently accessed resources, which is expected. The advantage of frequent pattern mining can be explained with the itemset where pages \emph{avaleht, 15208, inimesedInstituudid} are present together: it shows that navigation usually starts from the root page and also that the page containing links to different departments' contact information (\emph{inimesedInstituudid}) is used as a gateway to the page listing all the faculty members (\emph{15208}). The order in which the pages were navigated is not obvious, and looking at the web site we see that there do exist links to go either way. We provide a solution to this problem in the next section.
+However, even ordinary frequent item site mining can provide some information. From figure \ref{frequent_patterns}, it can be seen that the root page of the web site (\emph{avaleht}) is one of the most frequently accessed resources, which is expected. The advantage of frequent pattern mining can be explained with the itemset where pages \emph{avaleht, 15208, inimesedInstituudid} are present together: it shows that navigation usually starts from the root page and also that the page containing links to different departments' contact information (\emph{inimesedInstituudid}) is used as a gateway to the page listing all the faculty members (\emph{15208}). The order in which the pages were navigated is not obvious, and looking at the web site we see that there do exist links to go either way. We provide a solution to this problem in the next section.
 
 \begin{figure}[H]
   \centering
@@ -186,7 +186,7 @@ This problem can be solved by mining frequent sequential item sets. Sequential p
 To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates \cite{seq_apriori}.
 
 
-Compared to simple frequent itemsets, sequential patterns reveal more interesting results (\ref{frequent_patterns}). The first thing to notice is a continuous reloading of the root page repeating over quite big time intervals. Our guess is that this is caused by the people who have set the faculty web site as their browser's home page, which causes the faculty's page to be loaded each time a new browser window is opened. We have no better explanation for this phenomenon as the main page is currently pretty static and is seldom updated.
+Compared to simple frequent itemsets, sequential patterns reveal more interesting results (Figure \ref{frequent_patterns}). The first thing to notice is a continuous reloading of the root page repeating over quite big time intervals. Our guess is that this is caused by the people who have set the faculty web site as their browser's home page, which causes the faculty's page to be loaded each time a new browser window is opened. We have no better explanation for this phenomenon as the main page is currently pretty static and is seldom updated.
 
 The most important results from a usability point of view are the patterns where users visit page \emph{inimesedInstituudid}. Users spend relatively little time on this page, for example in the sequence
 \[ 
@@ -252,7 +252,7 @@ Pattern mining can also give insight into how patterns change over time. When mi
 
 We split up the data set into two: August and September and compared sequential patterns found for both datasets with same relative support, s=$0.06$.
 
-Results reveal that in August, users were seeking for general announcements. The page listing general news(\emph{yldteated}) had support of $0.07$ in August(figure \ref{aug2}), but in September(figure \ref{sep2}) it was below $0.06$. 
+Results reveal that in August, users were seeking for general announcements. The page listing general news(\emph{yldteated}) had support of $0.073$ in August(Figure \ref{aug2}), but in September(Figure \ref{sep2}) it was below $0.06$. 
 
 In September, sequences containing patterns for the contact information pages of faculty employees (\emph{inimesedtudengid}, \emph{inimesedInstituudid} had 3\% higher support than in August. The page listing timetables (\emph{oppetootunniplaanid}) was more frequently accessed in August than in September.
 

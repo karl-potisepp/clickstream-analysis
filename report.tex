@@ -145,7 +145,7 @@ However even if we manage to choose an optimal value for the support threshold, 
 
 In addition to the difficulties in choosing an ideal support threshold, there are other problems with this approach to detecting pages frequently requested during one session. While we can easily find groups of pages that are probably viewed together, much more insight could be gained if we knew the order in which the pages were navigated. Knowing this we would also gain information on how the users find what they need on the site. Similarly, if an user visits a page several times during one session, this fact is not known to us. Using \emph{sequential item sets} solves these problems.
 
-From \ref{frequent_patterns} , it can be seen that homepage(\emph{avaleht}) is on of the most frequently accessed resource, which is obvious. The advantage of frequent pattern mining can be explained with the itemset where pages \emph{avaleht, 15208, inimesedInstituudid} are present together: it shows that navigation is mostly done starting from homepage and also that official peoples listing page (\emph{inimesedInstituudid}) is used as a hop to go to computer science faculty members listing page(\emph{1508}).  The order of pages travelled is not obvious, but we now here that the navigation other way around is not possible, as the links do only exist one-way. This problem can be used by mining frequent sequential patterns.
+From \ref{frequent_patterns}, it can be seen that the root page of the web site (\emph{avaleht}) is one of the most frequently accessed resources, which is expected. The advantage of frequent pattern mining can be explained with the itemset where pages \emph{avaleht, 15208, inimesedInstituudid} are present together: it shows that navigation usually starts from the root page and also that the page containing links to different departments' contact information (\emph{inimesedInstituudid}) is used as a gateway to the page listing all the faculty members (\emph{15208}). The order in which the pages were navigated is not obvious, and looking at the web site we see that there do exist links to go either way. This problem can be solved by storing browsing sessions as sequences and mining frequent sequential patterns.
 
 \begin{figure}[H]
   \centering
@@ -170,8 +170,6 @@ Support & frequent itemset \\ \hline
   \label{frequent_patterns}
 \end{figure}
 
-Analyzing these results gives little new information. As expected, the most frequent pattern is \emph{avaleht}, which is the root page of the faculty's web site. The second most frequent, with relative support almost six times less, is the page containing the names of all students currently pursuing degrees in majors that are tied to the Computer Science and Mathematics faculty - \emph{15213}. In the log files this URL was sometimes followed by a list of HTTP GET attributes used to specify what information should be shown on the page. However since during the extraction step we removed these attributes from all URLs, we could not analyze the exact usage of this page further - such knowledge can probably be obtained from the log files of the database providing the students' data.
-
 
 \section{Frequent sequential patterns}
 Simply by listing all frequent item sets we will not see much of how users actually use the website. This is because of two reasons. First, frequent item sets do not capture the order of pages visited. Secondly, information about multiple page visits is lost constructing item sets.
@@ -188,13 +186,13 @@ This problem can be solved by mining frequent sequential item sets. Sequential p
 To mine frequent patterns from our dataset, we used an \emph{a priori}-based frequent item sequence miner that uses a trie to store the candidates\cite{seq_apriori}.
 
 
-Compared to simple frequent frequent itemsets, sequential patterns yield to more existing results (\ref{frequent_patterns}). First thing to notice is the continuous main-page refreshing with quite big time intervals. Our guess is that it caused by the people in faculty who have set faculty website as their home page in browser and when they open up new browser window, home page is opened. There is no better explanation for this phenomenon as the main page is currently pretty static had seldom updated.
+Compared to simple frequent itemsets, sequential patterns yield to more interesting results (\ref{frequent_patterns}). The first thing to notice is a continuous reloading of the root page repeating over quite big time intervals. Our guess is that this is caused by the people who have set the faculty web site as their browser's home page, which causes the faculty's page to be loaded each time a new browser window is opened. We have no better explanation for this phenomenon as the main page is currently pretty static and is seldom updated.
 
-Most important result from usability point of view  are the patterns where users visit page \emph{inimesedInstituudid}. Users spend relatively little time on this page, for example in sequence
+The most important results from a usability point of view are the patterns where users visit page \emph{inimesedInstituudid}. Users spend relatively little time on this page, for example in the sequence
 \[ 
 \overset{6.0}{avaleht} \rightarrow \overset{3.0}{inimesedInstituudid} \rightarrow \overset{30.0}{15208} 
 \]
-it is only  3 seconds for as all users' median time, but the page user landed after visited takes 30seconds. The reasons for is that page  \emph{inimesedInstituudid}  is only a navigational page - it holds links to other pages. This page can be eliminated, for example including the links on the main page somehow, possibly with a drop-down menu or adding directly.
+the median of time spent is only 3 seconds, but the next page the user requested is viewed for 30seconds. The probable reasons for this is that the page \emph{inimesedInstituudid} is only a navigational page - it just links to other more important pages. Since users tend to spend only a few seconds choosing the right path, this page can probably be removed by merging the content of the pages it links to, or providing the links on a previous page.
 
 
 
@@ -229,7 +227,7 @@ Support & frequent sequential pattern \\ \hline
 0.07 & $ \overset{9.0}{15213} \rightarrow \overset{20.0}{15213} \rightarrow \overset{7.0}{15213} $ \\ \hline
 0.06 & $ \overset{59.5}{oppetootunniplaanid} $ \\ \hline
 \end{tabular}
-  \caption{Frequent sequential patterns with time decorations. Time is given in seconds and is calculated by taking median value of time spent on that page that contains specified rule. }
+  \caption{Frequent sequential patterns with time decorations. Time is given in seconds and is calculated by taking median value of time spent on that page over all sequences that contain the pattern. }
   \label{frequent_patterns}
 \end{figure}
 
@@ -256,9 +254,9 @@ We split up the data set into two: August and September and compared sequential 
 
 Results reveal that in September\ref{sep2}, a frequently accessed page was \emph{/116245}, a news item announcing semester's official introduction event and first dates for lectures. This page was not present in august data as it was published on last day of August\ref{aug2}. Contrary to this, the page listing general news(\emph{yldteated}) had support of $0.07$ in August, but in September it was below $0.06$. 
 
-In September faculty and people listing pages(\emph{inimesedtudengid}, \emph{inimesedInstituudid}  had 3\% higher support than in August. Timetables listing page(\emph{oppetootunniplaanid})  was more frequently accessed in August than in September.
+In September, sequences containing patterns for the contact information pages of faculty employees (\emph{inimesedtudengid}, \emph{inimesedInstituudid} had 3\% higher support than in August. The page listing timetables (\emph{oppetootunniplaanid}) was more frequently accessed in August than in September.
 
-Results confirm somehow our assumptions and we conclude this method can be used to compare user interests for different periods.
+Since the results somewhat confirm our assumptions, we conclude that this method can be used to compare user interests for different time periods.
 
 
 \begin{figure}[H]

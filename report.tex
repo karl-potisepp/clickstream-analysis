@@ -252,7 +252,7 @@ Pattern mining can also give insight into how patterns change over time. When mi
 
 We split up the data set into two: August and September and compared sequential patterns found for both datasets with same relative support, s=$0.06$.
 
-Results reveal that in September\ref{sep2}, a frequently accessed page was \emph{/116245}, a news item announcing semester's official introduction event and first dates for lectures. This page was not present in august data as it was published on last day of August\ref{aug2}. Contrary to this, the page listing general news(\emph{yldteated}) had support of $0.07$ in August, but in September it was below $0.06$. 
+Results reveal that in August, users were seeking for general announcements. The page listing general news(\emph{yldteated}) had support of $0.07$ in August(figure \ref{aug2}), but in September(figure \ref{sep2}) it was below $0.06$. 
 
 In September, sequences containing patterns for the contact information pages of faculty employees (\emph{inimesedtudengid}, \emph{inimesedInstituudid} had 3\% higher support than in August. The page listing timetables (\emph{oppetootunniplaanid}) was more frequently accessed in August than in September.
 
@@ -314,7 +314,7 @@ In our data set, the number of different pages visited is relatively big compare
 We conducted the experiment and focused only on sessions that contained the page \emph{inimesed/Instituudid}. The results did not reveal anything interesting, but helped us find more patterns about the page than we had found before. For example, a frequent pattern with $40\%$ support among filtered sessions was discovered that showed how in some cases users tend to reload the front page before arriving on \emph{inimesed/Instituudid}.
 
 \section{Summary}
-We have shown a practical example of how traditional frequent pattern mining algorithms can be useful in web analytics context and understanding users' need. Sequential patterns decorated with times spent on pages helped us identify a hop-pages without even taking a look at the website.
+We have shown a practical example of how traditional frequent pattern mining algorithms can be useful in web analytics context and understanding users' need. Sequential patterns decorated with times spent on pages helped us identify hop-pages without even taking a look at the website.
 
 More work in this field could be done in researching possible outliers detection and pattern significance measures to even more simplify interesting pattern detection.
 

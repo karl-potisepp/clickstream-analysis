@@ -1,47 +1,41 @@
 #here we should set some default configuration. support threshold, exclude patterns
-
+import os, sys
+from logs import apachelogs
 session_timeout = 1800
 
-#if float, then relative is considered
-#if int, then absolute
+#if float, then relative is considered, if int, then absolute
 support = 0.06
 
-filename = [
-    "math-access_log",
-    "math-access_log.1",
-    "math-access_log.2",
-    "math-access_log.3",
-    "math-access_log.4",
-    "math-access_log.5",
-    "math-access_log.6",
-    "math-access_log.7",
-    "math-access_log.8",
-    "math-access_log.9"]    
 
-"""
-filename = [
+path = "../sample_data/someother/"
+log_line_reader = lambda x:  apachelogs.SomeOtherLogLine(x)
 
-    "math-access_log",
-    "math-access_log.1"]    
-print "December"
-"""        
-filename.reverse()
+#or uncomment
+
+#path = "../sample_data/clf/"
+#log_line_reader = lambda x:  apachelogs.ApacheLogLine(x)
 
 
-DATA = "../../data/all/"
-OUTPUT = "../../output/"
-paths = [DATA+f for f in filename]
 
-range_min = 1
-range_max = 100
+if os.path.isdir(path) :
+    filename = map(lambda x: os.path.join(path, x), os.listdir(path))
+    filename = filter(lambda x: os.path.isfile(x), filename)
+else:
+  print "invalid path, terminating"
+  sys.exit(2)
 
-filter_fn = lambda x: len(x) > 1
 
 
-def has_keywords(x):
-  
-  for line in x:
-    if line == "inimesed_Instituudid":
-      return True
-  return False
+OUTPUT = "results.html"
+
+
+
+
+
+#applied onlu on simple session ie [page1, page2]
+#can be used to filter session length or contents
+session_filter_fn = lambda x: len(x) > 1
+
+
+
 

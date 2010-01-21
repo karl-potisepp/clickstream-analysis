@@ -1,9 +1,7 @@
-To use clustering, following python libraries must be installed
-
-pycluter - http://bonsai.ims.u-tokyo.ac.jp/~mdehoon/software/cluster/software.htm
+requirements
 numpy - http://sourceforge.net/projects/numpy/
 matplotlib - http://matplotlib.sourceforge.net/
-python-tk - writing Tk applications with Python
+
 
 
 Development related info:

@@ -15,23 +15,24 @@ def deocarate_timings(patterns, log, total):
   patterns = sorted(patterns, key=operator.itemgetter(1), reverse=True)
   timings = {}
   for trans in transactions.values():
-    if not config.filter_fn(trans): continue
+    if not config.session_filter_fn(trans): continue
     i = 0
     for pattern, support in patterns:
       pos = contains(trans, pattern)
       if pos !=-1:
         timings.setdefault(i, Timing(pattern, support)).sum(pos, trans)
       i+=1
-  
-  print "\n\n\n\n\n\n"
-  print "\\begin{tabular}{ r | l }"
-  print "Support & frequent sequential pattern \\\\ \\hline"
-  for k, v in timings.items():
-    v.output(total)
-  print "\\end{tabular}"
+
   return timings
-  print "\n\n\n\n\n\n"
-  
+
+
+
+def output_readable(timings, out):
+  out.h1("Sequential patterns with timing ")
+  out.tbl()
+  for k, v in timings.items():
+    v.output(out)
+  out.e_tbl()  
 
 
 def contains(session, pattern):
@@ -70,15 +71,16 @@ class Timing:
       self.times[i].append(delta.seconds)
 
       
-  def output(self, total):
+  def output(self, out):
     m = [numpy.around(numpy.median(x),2) for x in self.times]
     first = True
-    print str(round(self.support,2)), "& $",
+    sequence = ""
     for b, a in zip(self.pattern, m):
       
       if not first:
-        print "\\rightarrow",
+        sequence +=" -> "
       first = False
-      print "\\overset{"+str(a)+"}{"+str(b)+"}",
+      sequence += str(b)+" ("+str(a)+" sec) "
     
-    print "$ \\\\ \hline"
+
+    out.tr([str(round(self.support,2)), sequence])

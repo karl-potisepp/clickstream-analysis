@@ -1,32 +1,15 @@
-"""apachelogs.py: code for reading and parsing Apache log files.
-Based heavily on apachelogs.py, authored by Kevin Scott (kevin.scott@gmail.com)
-
-Sample use -- counting the number of 40xs seen:
-
-  import apachelogs
-
-  alf = ApacheLogFile('access.log')
-  40x_count = 0
-  for log_line in alf:
-    if log_line.http_response_code.startswith('40'):
-      40x_count += 1
-  alf.close()
-  print "Saw %d 40x responses" % 40x_count
-"""
-
+"""apachelogs.py: Based heavily on apachelogs.py, authored by Kevin Scott (kevin.scott@gmail.com)"""
 
 import re
 import fileinput
+import config
+import time
 
-
+_lineRegex = re.compile(r'([^ ]*) ([^ ]*) ([^ ]*) \[([^\]]*)\] "([^"]*)" (\d+) ([^ ]*)')
 class ApacheLogLine:
     """A Python class whose attributes are the fields of Apache log line.
-
-    Designed specifically with combined format access logs in mind.    For
-    example, the log line
-
-    127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326 "http://www.example.com/start.html" "Mozilla/4.08 [en] (Win98; I ;Nav)"
-
+    CLF format only
+    127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700] "GET /apache_pb.gif HTTP/1.0" 200 2326
     would have the following field values as an ApacheLogLine:
 
     ip = '127.0.0.1'
@@ -36,17 +19,19 @@ class ApacheLogLine:
     request_line = 'GET /apache_pb.gif HTTP/1.0'
     http_response_code = '200'
     http_response_size = 2326
-    referrer = 'http://www.example.com/start.html'
-    user_agent = 'Mozilla/4.08 [en] (Win98; I ;Nav)'
     http_method = 'GET'
     url = '/apache_pb.gif'
     http_vers = 'HTTP/1.0'
     """
-    def __init__(self, *rgroups ):
+    
+    def __init__(self, line):
+        m = _lineRegex.match(line.strip())
+ 
         self.ip, self.ident, \
         self.http_user, self.time, \
         self.request_line, self.http_response_code, \
-        self.http_response_size = rgroups
+        self.http_response_size = m.groups()
+        
         self.http_method, self.url, self.http_vers = self.request_line.split()
         
     def __str__(self):
@@ -55,7 +40,31 @@ class ApacheLogLine:
                 self.http_response_code, self.http_response_size])
 
 
-_lineRegex = re.compile(r'([^ ]*) ([^ ]*) ([^ ]*) \[([^\]]*)\] "([^"]*)" (\d+) (\d+)')
+class SomeOtherLogLine:
+
+    def __init__(self, line):
+
+        groups = line.strip().split(";")
+        #['1', '1257170750', '2.11.2009 16:05:50', '42', '1', '42', 'browser', 'page1', '42']
+        #weekday  unix_time  usual_time  client_id  host_ip  site_id  agent  request_url  referer_url
+
+        self.weekday, self.unix_time, self.time, \
+        self.client_id, self.ip, self.site_id, \
+        self.agent, self.url, self.refere_url = groups
+        
+        self.http_response_code=200
+        self.http_method = "GET"
+        self.time= time.strftime("%d/%b/%Y:%H:%M:%S", time.localtime(float(self.unix_time)))
+        
+        
+    def __str__(self):
+        """Return a simple string representation of an ApacheLogLine."""
+        return ' '.join([self.ip, self.ident, self.time, self.request_line,
+                self.http_response_code, self.http_response_size])    
+
+
+
+
 
 class ApacheLogFile:
     """An abstraction for reading and parsing Apache log files."""
@@ -71,13 +80,9 @@ class ApacheLogFile:
 
     def __iter__(self):
         """Returns a log line object for each iteration. """
-        match = _lineRegex.match
+        
         for line in self.f:
-            m = match(line)
-            if m:
-                try:
-                    log_line = ApacheLogLine(*m.groups())
-                    yield log_line
-                except:
-                    print "NON_COMPLIANT_FORMAT: ", line
+            log_line = config.log_line_reader(line)
+            yield log_line
+
                     

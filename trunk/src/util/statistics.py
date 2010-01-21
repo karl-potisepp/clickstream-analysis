@@ -1,19 +1,20 @@
 #some simple descriptive statistics
-import numpy
+
 import config
 class LogFileStatistics:
     
     def __init__(self, log_parser):
         self.log_parser = log_parser
 
-    def output_some_statistics(self):
-        print "Sessions: ", self.log_parser.get_session_count()
-        print "Matching lines: ", self.log_parser.get_line_count()
-        print "Number of different urls: ", len(self.log_parser.urls)
-    
+    def output_some_statistics(self, out):
+        out.h1("Some stats")
+        out.p("Sessions: {0}".format(self.log_parser.get_session_count()))
+        out.p("Matching lines: {0}".format(self.log_parser.get_line_count()))
+        out.p("Number of different urls: {0}".format(len(self.log_parser.urls)))    
 
     def session_len_graph(self, transactions):
       import pylab
+      import numpy
       lens = sorted([len(session) for session in transactions])
       min = numpy.min(numpy.array(lens))
       max = 100
@@ -24,6 +25,8 @@ class LogFileStatistics:
       pylab.savefig(config.OUTPUT+"session_len.pdf")
 
     def page_freq_graph(self, transactions):
+        import config
+        import numpy
         freq_item_list = {}
         for trans in transactions:
             for item in trans:
@@ -55,8 +58,5 @@ class LogFileStatistics:
         pylab.savefig(config.OUTPUT+"page_distribution.pdf")
         
         
-        
-        
-
 
         

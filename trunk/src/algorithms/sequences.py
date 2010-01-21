@@ -11,7 +11,7 @@ http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.50.2212
 Knowledge and Data Engineering, 1998
 
 
-Apriori  like implementationn is used instead of original proposed DHP
+Apriori  like implementationn is used instead of originally proposed DHP
 
 
 '''

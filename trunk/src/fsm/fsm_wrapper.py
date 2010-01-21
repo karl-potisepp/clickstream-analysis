@@ -6,9 +6,42 @@ Wrapper for fsm.exe. Provides way to use fsm.exe from python as subprocess
 
 '''
 
-import subprocess
+import subprocess, os
     
+IN_FILE = "fsm_in.txt"
+OUT_FILE = "fsm_out.txt"
+
+    
+                
+def fpm(trans, support=100):
+    
+    transactions, dict = encode(trans)
+  
+    sessions_file = open(IN_FILE, 'w')
+    for session in transactions:
+        line = ",".join(map(str, session)) + '\n'
+        sessions_file.write(line)
+    sessions_file.close()
+    
+    
+    
+
+    p = subprocess.Popen(['../../fsm/fsm.exe',
+                          'apriori',
+                          IN_FILE,
+                          str(support),
+                          OUT_FILE])
+    p.wait()
+    
+    result = decode(open(OUT_FILE), dict)
+    os.remove(IN_FILE)
+    os.remove(OUT_FILE)
+    
+    return result
+
+
 def encode(rows):
+    """ecnodes input for fsm.exe"""
     new_rows = []
     counter = 0
     dict = {}
@@ -22,33 +55,9 @@ def encode(rows):
             new_row.append(dict[item])
         new_rows.append(new_row)
     return new_rows, dict
-                
-def fpm(trans, support=100, file="woot.txt"):
-  
-    transactions, dict = encode(trans)
-  
-    sessions_file = open('../../fsm/'+file, 'w')
-    for session in transactions:
-        line = ",".join(map(str, session)) + '\n'
-        sessions_file.write(line)
-    sessions_file.close()
-    
-    
-    
-    fp = open('../../fsm/valjund.txt', 'w')
-    p = subprocess.Popen(['../../fsm/fsm.exe',
-                          'apriori',
-                          '../../fsm/woot.txt',
-                          str(support),
-                          '../../fsm/output.txt'],
-                          stdout=fp,stderr=fp)
-    p.wait()
-    fp.close()
-
-    return decode(open('../../fsm/output.txt'), dict)
-
         
 def decode(rows, codebook):
+    """deceodes fsm.exe output"""
     tts = 0
     new_rows = []
     first = True
@@ -64,7 +73,8 @@ def decode(rows, codebook):
         for item in split:
             new_row.append(resolve_item(int(item), codebook))
         new_rows.append((new_row, support))
-        
+    
+    rows.close()
     return new_rows
     
              

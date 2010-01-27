@@ -25,8 +25,9 @@ def fpm(trans, support=100):
     
     
     
-
-    p = subprocess.Popen(['../../fsm/fsm.exe',
+    ##import sys
+    ##print sys.path[0]
+    p = subprocess.Popen(['./fsm/fsm.exe',
                           'apriori',
                           IN_FILE,
                           str(support),

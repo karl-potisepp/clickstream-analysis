@@ -7,13 +7,13 @@ session_timeout = 1800
 support = 0.06
 
 
-path = "../sample_data/someother/"
-log_line_reader = lambda x:  apachelogs.SomeOtherLogLine(x)
+#path = "../sample_data/someother/"
+#log_line_reader = lambda x:  apachelogs.SomeOtherLogLine(x)
 
 #or uncomment
 
-#path = "../sample_data/clf/"
-#log_line_reader = lambda x:  apachelogs.ApacheLogLine(x)
+path = "../sample_data/clf/"
+log_line_reader = lambda x:  apachelogs.ApacheLogLine(x)
 
 
 

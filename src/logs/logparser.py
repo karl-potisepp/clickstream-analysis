@@ -46,7 +46,7 @@ class LogParser:
         if len(line.url) == 0:
             line.url = "avaleht"
         
-        line.url = re.sub(r'[^\w]', '', line.url)
+        ##line.url = re.sub(r'[^\w]', '', line.url)
 
     
     def parse(self):
